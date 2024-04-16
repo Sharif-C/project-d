@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\WarehouseController;
 use App\Models\Product;
 use Illuminate\Support\Facades\Route;
 
@@ -32,3 +33,10 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
+
+Route::get('/add-warehouse', function () {
+    return view('warehouse.add');
+});
+
+Route::post('/warehouse/store', [WarehouseController::class, 'storeWarehouse'])->name('warehouse.store');
+
