@@ -40,3 +40,8 @@ Route::get('/add-warehouse', function () {
 
 Route::post('/warehouse/store', [WarehouseController::class, 'storeWarehouse'])->name('warehouse.store');
 
+Route::get('delete-warehouse', function () {
+    return view('warehouse.delete');
+});
+
+Route::post('warehouse/delete', [WarehouseController::class, 'deleteWareHouse'])->name('warehouse.delete');

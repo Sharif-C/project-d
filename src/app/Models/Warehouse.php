@@ -10,7 +10,7 @@ class Warehouse extends Model
 {
     use HasFactory;
 
-    protected $connection = 'mogodb';
+    protected $connection = 'mongodb';
     protected $collection = 'warehouses';
     protected $fillable = ['name', 'address', 'city', 'zip_code', 'country', 'street', 'house_number'];
 

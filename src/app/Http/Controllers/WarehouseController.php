@@ -10,9 +10,20 @@ class WarehouseController extends Controller
     public function storeWarehouse(Request $request)
     {
         $newWarehouse = new Warehouse();
-        $newWarehouse->name = "test";
-        //$newWarehouse->save();
+        $newWarehouse->name = "TESt";
+        $newWarehouse->save();
+        
+        return "Warehouse created";
+    }
 
-        return "Done";
+    public static function deleteWarehouse($warehouseName)
+    {
+        $warehouse = Warehouse::where('name', $warehouseName)->first();
+        if(!$warehouse) {
+            return "Warehouse not found!";
+        }
+
+        $warehouse->delete();
+        return "Warehouse deleted!";
     }
 }
