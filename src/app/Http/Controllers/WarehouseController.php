@@ -11,6 +11,11 @@ class WarehouseController extends Controller
     {
         $newWarehouse = new Warehouse();
         $newWarehouse->name = $request->name;
+        $newWarehouse->country = $request->country;
+        $newWarehouse->zip_code = $request->zip_code;
+        $newWarehouse->street = $request->street;
+        $newWarehouse->house_number = $request->house_number;
+        $newWarehouse->city = $request->city;
         $newWarehouse->save();
         
         return redirect()->back()->with("success_add", "Warehouse created successfully");    
@@ -18,7 +23,7 @@ class WarehouseController extends Controller
 
     public function deleteWarehouse(Request $request)
     {
-        $warehouseId = $request->warehouse_id; 
+        $warehouseId = $request->warehouse_id;  
         $warehouse = Warehouse::find($warehouseId); 
         if(!$warehouse) {
             return "Warehouse not found!";
@@ -28,7 +33,7 @@ class WarehouseController extends Controller
         return redirect()->back()->with("success_delete", "Warehouse deleted successfully");
     }
 
-    public function manageWarehouseView()
+    public function manageWarehouseView() 
     {
         $warehouses = Warehouse::all();
         return view('warehouse.manage', compact('warehouses'));

@@ -14,4 +14,9 @@ class Warehouse extends Model
     protected $collection = 'warehouses';
     protected $fillable = ['name', 'address', 'city', 'zip_code', 'country', 'street', 'house_number'];
 
+    public function GetAddress()
+    {
+        return $this->country . ', ' . $this->city . ', ' . $this->street . ' ' . $this->house_number . ' ' . $this->zip_code;
+    }
+
 }

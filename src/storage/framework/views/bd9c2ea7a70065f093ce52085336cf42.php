@@ -1,13 +1,19 @@
 <?php $__env->startSection('content'); ?>
     <form action="<?php echo e(route("warehouse.store")); ?>" method="POST" class="bg-indigo-500 p-2 rounded m-auto flex flex-col">
         <?php echo csrf_field(); ?>
-        <input type="text" name="name" placeholder="Warehouse name" required>
+        <input type="text" name="name" placeholder="Add warehouse name" required>
+        <input type="text" name="city" placeholder="Enter city" required>
+        <input type="text" name="zip_code" placeholder="Enter zip-code" required>
+        <input type="text" name="country" placeholder="Enter country" required>
+        <input type="text" name="street" placeholder="Enter street" required>
+        <input type="text" name="house_number" placeholder="Enter house-number" required>
+
         <button class="p-2 bg-emerald-500 text-white rounded">Save</button>
         
         <?php if(session()->has('success_add')): ?> 
             <p class="p-2 text-emerald-500"><?php echo e(session('success_add')); ?></p>
         <?php endif; ?>
-    </form>
+    </form>  
 
 
     <!-- Table -->
@@ -31,7 +37,7 @@
                             <div class="text-left font-semibold">Address</div>
                         </th>
                         <th class="p-2">
-                            <div class="text-center font-semibold">Action</div>
+                            <div class="text-center font-semibold">Delete</div>
                         </th>
                     </tr>
                 </thead>
@@ -47,7 +53,10 @@
                             <div class="font-medium text-gray-800"><?php echo e($warehouse->name); ?></div>
                         </td>
                         <td class="p-2">
-                            <div class="text-left">TO DO</div>
+                            <div class="font-medium text-gray-800">
+                                <?php echo e($warehouse->GetAddress()); ?>
+
+                            </div>
                         </td>
                         <td class="p-2">
                             <div class="flex justify-center">
