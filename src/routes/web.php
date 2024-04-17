@@ -17,8 +17,7 @@ Route::post('/product/store-serial-number', [ProductController::class, 'storeSer
 
 
 Route::post('/store-product', [ProductController::class, 'store'])->name('product.store');
-
-
+Route::post('/product/delete', [ProductController::class, 'deleteProduct'])->name('product.delete');
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
