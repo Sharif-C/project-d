@@ -14,3 +14,9 @@
 
 ## Cache router
 `docker compose exec php php artisan route:cache`
+
+## Cache views
+`docker compose exec php php artisan view:cache`
+
+## Clear views
+`docker compose exec php php artisan view:clear`
