@@ -11,3 +11,6 @@
 
 ## Stop server
 `docker compose down`
+
+## Cache router
+`docker compose exec php php artisan route:cache`

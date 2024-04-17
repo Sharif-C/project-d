@@ -71,7 +71,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 
           array (
-            '_route' => 'generated::kk7G8D35RULtAN1V',
+            '_route' => 'generated::dipn3rbksQqSSDkJ',
           ),
           1 => NULL,
           2 => 
@@ -91,7 +91,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 
           array (
-            '_route' => 'generated::NBD8pD27cIo0cstp',
+            '_route' => 'generated::lExMasSMjcKowSwi',
           ),
           1 => NULL,
           2 => 
@@ -111,7 +111,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 
           array (
-            '_route' => 'generated::BL52ABO4WDohBwK3',
+            '_route' => 'generated::9Xfj4DKrRZesNrzf',
           ),
           1 => NULL,
           2 => 
@@ -131,7 +131,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 
           array (
-            '_route' => 'generated::rO3GOgC6ZbglUeXB',
+            '_route' => 'generated::k97zCAJc2nmJSU45',
           ),
           1 => NULL,
           2 => 
@@ -278,7 +278,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 
           array (
-            '_route' => 'generated::61BQFVwI59ixxVKl',
+            '_route' => 'generated::AMVEJXdUFVkXRSwo',
           ),
           1 => NULL,
           2 => 
@@ -314,7 +314,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 
           array (
-            '_route' => 'generated::a5cEzIkuSvUzuHOY',
+            '_route' => 'generated::XznynY8NaYscHlkC',
           ),
           1 => NULL,
           2 => 
@@ -444,7 +444,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 
           array (
-            '_route' => 'generated::h31uXO4MqSf4YcvH',
+            '_route' => 'generated::SG2Y9l16cf3QgcOP',
           ),
           1 => NULL,
           2 => 
@@ -495,13 +495,13 @@ app('router')->setCompiledRoutes(
           6 => NULL,
         ),
       ),
-      '/add-warehouse' => 
+      '/manage-warehouse' => 
       array (
         0 => 
         array (
           0 => 
           array (
-            '_route' => 'generated::1wXIX5UkBDdErvJk',
+            '_route' => 'generated::L7ixKsFERWNuXt2J',
           ),
           1 => NULL,
           2 => 
@@ -522,6 +522,25 @@ app('router')->setCompiledRoutes(
           0 => 
           array (
             '_route' => 'warehouse.store',
+          ),
+          1 => NULL,
+          2 => 
+          array (
+            'POST' => 0,
+          ),
+          3 => NULL,
+          4 => false,
+          5 => false,
+          6 => NULL,
+        ),
+      ),
+      '/warehouse/delete' => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array (
+            '_route' => 'warehouse.delete',
           ),
           1 => NULL,
           2 => 
@@ -712,7 +731,7 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
-    'generated::kk7G8D35RULtAN1V' => 
+    'generated::dipn3rbksQqSSDkJ' => 
     array (
       'methods' => 
       array (
@@ -731,7 +750,7 @@ app('router')->setCompiledRoutes(
 
                     return \\Illuminate\\Support\\Facades\\View::file(\'/var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Configuration\'.\'/../resources/health-up.blade.php\');
                 }";s:5:"scope";s:54:"Illuminate\\Foundation\\Configuration\\ApplicationBuilder";s:4:"this";N;s:4:"self";s:32:"00000000000003ab0000000000000000";}}',
-        'as' => 'generated::kk7G8D35RULtAN1V',
+        'as' => 'generated::dipn3rbksQqSSDkJ',
       ),
       'fallback' => false,
       'defaults' => 
@@ -747,7 +766,7 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
-    'generated::NBD8pD27cIo0cstp' => 
+    'generated::lExMasSMjcKowSwi' => 
     array (
       'methods' => 
       array (
@@ -769,7 +788,7 @@ app('router')->setCompiledRoutes(
         'where' => 
         array (
         ),
-        'as' => 'generated::NBD8pD27cIo0cstp',
+        'as' => 'generated::lExMasSMjcKowSwi',
       ),
       'fallback' => false,
       'defaults' => 
@@ -785,7 +804,7 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
-    'generated::BL52ABO4WDohBwK3' => 
+    'generated::9Xfj4DKrRZesNrzf' => 
     array (
       'methods' => 
       array (
@@ -808,7 +827,7 @@ app('router')->setCompiledRoutes(
         'where' => 
         array (
         ),
-        'as' => 'generated::BL52ABO4WDohBwK3',
+        'as' => 'generated::9Xfj4DKrRZesNrzf',
       ),
       'fallback' => false,
       'defaults' => 
@@ -824,7 +843,7 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
-    'generated::rO3GOgC6ZbglUeXB' => 
+    'generated::k97zCAJc2nmJSU45' => 
     array (
       'methods' => 
       array (
@@ -845,7 +864,7 @@ app('router')->setCompiledRoutes(
         'where' => 
         array (
         ),
-        'as' => 'generated::rO3GOgC6ZbglUeXB',
+        'as' => 'generated::k97zCAJc2nmJSU45',
       ),
       'fallback' => false,
       'defaults' => 
@@ -1123,7 +1142,7 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
-    'generated::61BQFVwI59ixxVKl' => 
+    'generated::AMVEJXdUFVkXRSwo' => 
     array (
       'methods' => 
       array (
@@ -1144,7 +1163,7 @@ app('router')->setCompiledRoutes(
         'where' => 
         array (
         ),
-        'as' => 'generated::61BQFVwI59ixxVKl',
+        'as' => 'generated::AMVEJXdUFVkXRSwo',
       ),
       'fallback' => false,
       'defaults' => 
@@ -1198,7 +1217,7 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
-    'generated::a5cEzIkuSvUzuHOY' => 
+    'generated::XznynY8NaYscHlkC' => 
     array (
       'methods' => 
       array (
@@ -1219,7 +1238,7 @@ app('router')->setCompiledRoutes(
         'where' => 
         array (
         ),
-        'as' => 'generated::a5cEzIkuSvUzuHOY',
+        'as' => 'generated::XznynY8NaYscHlkC',
       ),
       'fallback' => false,
       'defaults' => 
@@ -1539,7 +1558,7 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
-    'generated::h31uXO4MqSf4YcvH' => 
+    'generated::SG2Y9l16cf3QgcOP' => 
     array (
       'methods' => 
       array (
@@ -1560,7 +1579,7 @@ app('router')->setCompiledRoutes(
         'where' => 
         array (
         ),
-        'as' => 'generated::h31uXO4MqSf4YcvH',
+        'as' => 'generated::SG2Y9l16cf3QgcOP',
       ),
       'fallback' => false,
       'defaults' => 
@@ -1650,29 +1669,28 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
-    'generated::1wXIX5UkBDdErvJk' => 
+    'generated::L7ixKsFERWNuXt2J' => 
     array (
       'methods' => 
       array (
         0 => 'GET',
         1 => 'HEAD',
       ),
-      'uri' => 'add-warehouse',
+      'uri' => 'manage-warehouse',
       'action' => 
       array (
         'middleware' => 
         array (
           0 => 'web',
         ),
-        'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:50:"function () {
-    return \\view(\'warehouse.add\');
-}";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000003b70000000000000000";}}',
+        'uses' => 'App\\Http\\Controllers\\WarehouseController@manageWarehouseView',
+        'controller' => 'App\\Http\\Controllers\\WarehouseController@manageWarehouseView',
         'namespace' => NULL,
         'prefix' => '',
         'where' => 
         array (
         ),
-        'as' => 'generated::1wXIX5UkBDdErvJk',
+        'as' => 'generated::L7ixKsFERWNuXt2J',
       ),
       'fallback' => false,
       'defaults' => 
@@ -1709,6 +1727,42 @@ app('router')->setCompiledRoutes(
         array (
         ),
         'as' => 'warehouse.store',
+      ),
+      'fallback' => false,
+      'defaults' => 
+      array (
+      ),
+      'wheres' => 
+      array (
+      ),
+      'bindingFields' => 
+      array (
+      ),
+      'lockSeconds' => NULL,
+      'waitSeconds' => NULL,
+      'withTrashed' => false,
+    ),
+    'warehouse.delete' => 
+    array (
+      'methods' => 
+      array (
+        0 => 'POST',
+      ),
+      'uri' => 'warehouse/delete',
+      'action' => 
+      array (
+        'middleware' => 
+        array (
+          0 => 'web',
+        ),
+        'uses' => 'App\\Http\\Controllers\\WarehouseController@deleteWareHouse',
+        'controller' => 'App\\Http\\Controllers\\WarehouseController@deleteWareHouse',
+        'namespace' => NULL,
+        'prefix' => '',
+        'where' => 
+        array (
+        ),
+        'as' => 'warehouse.delete',
       ),
       'fallback' => false,
       'defaults' => 

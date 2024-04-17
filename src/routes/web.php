@@ -34,14 +34,11 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__ . '/auth.php';
 
-Route::get('/add-warehouse', function () {
-    return view('warehouse.add');
-});
+
+Route::get('/manage-warehouse', [WarehouseController::class, 'manageWarehouseView']);
 
 Route::post('/warehouse/store', [WarehouseController::class, 'storeWarehouse'])->name('warehouse.store');
 
-Route::get('delete-warehouse', function () {
-    return view('warehouse.delete');
-});
+Route::post('/warehouse/delete', [WarehouseController::class, 'deleteWareHouse'])->name('warehouse.delete');
 
-Route::post('warehouse/delete', [WarehouseController::class, 'deleteWareHouse'])->name('warehouse.delete');
+
