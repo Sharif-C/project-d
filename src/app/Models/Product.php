@@ -8,8 +8,7 @@ use MongoDB\Laravel\Eloquent\Model;
 
 
 /**
- * @mixin \Eloquent
- *
+ * @mixin \Eloquent 
  * Product Model
  * @property string $name The name of the product
  * @property string $description The description of the product
