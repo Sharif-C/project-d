@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\WarehouseController;
 use App\Models\Product;
 use Illuminate\Support\Facades\Route;
 
@@ -31,4 +32,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__ . '/auth.php'; 
+
+
+Route::get('/manage-warehouse', [WarehouseController::class, 'manageWarehouseView']);
+
+Route::post('/warehouse/store', [WarehouseController::class, 'storeWarehouse'])->name('warehouse.store');
+
+Route::post('/warehouse/delete', [WarehouseController::class, 'deleteWareHouse'])->name('warehouse.delete');
+
+
