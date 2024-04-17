@@ -16,7 +16,8 @@ class Warehouse extends Model
 
     public function GetAddress()
     {
-        return $this->country . ', ' . $this->city . ', ' . $this->street . ' ' . $this->house_number . ' ' . $this->zip_code;
+
+        return "$this->street $this->house_number, $this->zip_code $this->city, $this->country";
     }
 
 }

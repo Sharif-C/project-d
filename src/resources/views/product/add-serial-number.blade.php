@@ -5,13 +5,28 @@
 
         <form action="{{route('product.store-serial-number')}}" method="POST" class="flex flex-col gap-2">
             @csrf
-            <select name="product_id" id="">
-                @foreach($products as $p)
-                    <option value="{{$p->_id}}">{{$p->name}}</option>
-                @endforeach
-            </select>
-            <input type="text" name="serial_number" id="" placeholder="Serial number">
-            <input type="text" name="warehouse_id" id="" placeholder="Warehouse ID">
+            <div class="flex flex-col">
+                <label for="product_id">Product</label>
+                <select name="product_id" id="">
+                    @foreach($products as $w)
+                        <option value="{{$w->_id}}">{{$w->name}}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="flex flex-col">
+                <label for="serial_number">Serial number</label>
+                <input type="text" name="serial_number" id="" placeholder="Serial number">
+            </div>
+
+            <div class="flex flex-col">
+                <label for="warehouse_id">Warehouse</label>
+                <select name="warehouse_id" id="">
+                    @foreach($warehouses as $w)
+                        <option value="{{$w->_id}}">{{$w->name}}</option>
+                    @endforeach
+                </select>
+            </div>
             <button class="rounded bg-emerald-400 text-white py-2 px-3">Save</button>
         </form>
 

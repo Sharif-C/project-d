@@ -10,10 +10,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/add-product', function () {
-    $products = Product::select('_id', 'name', 'description', 'created_at', 'updated_at')->get();
-    return view('product.add', compact('products'));
-});
+Route::get('/manage-product', [ProductController::class, 'addProductView']);
 
 Route::get('/product/add-serial-number', [ProductController::class, 'addSerialNumberView']);
 Route::post('/product/store-serial-number', [ProductController::class, 'storeSerialNumber'])->name('product.store-serial-number');
@@ -32,7 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__ . '/auth.php'; 
+require __DIR__ . '/auth.php';
 
 
 Route::get('/manage-warehouse', [WarehouseController::class, 'manageWarehouseView']);
