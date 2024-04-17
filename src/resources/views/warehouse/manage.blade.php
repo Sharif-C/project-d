@@ -1,6 +1,8 @@
 @extends('layouts.main')
 @section('content')
 
+    <x-popup-modal/>
+
     <section class="flex flex-col justify-start gap-4 p-2 max-w-5xl m-auto">
 
         <form action="{{route("warehouse.store")}}" method="POST" class="bg-white p-6 rounded flex flex-col gap-2 w-fit shadow-lg">
@@ -81,7 +83,6 @@
                 </table>
             </div>
         </div>
-
     </section>
 
     <!-- Single form for deleting warehouses -->
@@ -92,9 +93,8 @@
 
     <script type="text/javascript">
         function deleteWarehouse(id) {
-            let warehouseId = document.getElementById('warehouse_id');
-            warehouseId.setAttribute('value', id);
-            document.getElementById("deleteForm").submit();
+            $(".popup-overlay").toggle();
+            $("#warehouse_id").val(id);
         }
     </script>
 
