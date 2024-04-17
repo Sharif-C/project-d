@@ -54,4 +54,15 @@ class ProductController extends Controller
         return redirect()->back()->with('success', 'Serial number added!');
 
     }
+    public function deleteProduct(Request $request)
+    {
+        $productID = $request->input('product_id');
+        $product = Product::find($productID);
+        if(!$product)
+        {
+            return "Product not Found";
+        }
+        $product->delete();
+            return redirect()->back()->with("success_delete","Product deleted successful");
+    }
 }

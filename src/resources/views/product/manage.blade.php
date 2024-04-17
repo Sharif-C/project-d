@@ -21,6 +21,10 @@
         <div class="mx-auto w-full rounded-sm border border-gray-200 bg-white shadow-lg">
             <header class="border-b border-gray-100 px-5 py-4">
                 <div class="font-semibold text-gray-800">Products</div>
+
+                @if(session()->has('success_delete'))
+                    <p class="p-2 text-emerald-500">{{session('success_delete')}}</p>
+                @endif
             </header>
 
             <div class="overflow-x-auto p-3">
@@ -58,7 +62,7 @@
                             <td class="p-2">
                                 <div class="flex justify-center">
                                     <!-- Delete button with data-id attribute -->
-                                    <button class="delete-button" onclick="deleteWarehouse('{{$product->id}}')">
+                                    <button class="delete-button" onclick="deleteProduct('{{$product->id}}')">
                                         <x-heroicon-o-trash class="w-6 h-6 text-gray-500 hover:text-rose-500 duration-200 ease-in-out"/>
                                     </button>
                                 </div>
@@ -72,16 +76,16 @@
 
     </section>
 
-    <!-- Single form for deleting warehouses -->
-{{--    <form id="deleteForm" action="{{ route('warehouse.delete') }}" method="POST" hidden>--}}
-{{--        @csrf--}}
-{{--        <input type="text" name="warehouse_id" id="warehouse_id">--}}
-{{--    </form>--}}
+    <!-- Single form for deleting Product -->
+    <form id="deleteForm" action="{{ route('product.delete') }}" method="POST" hidden>
+       @csrf
+        <input type="text" name="product_id" id="product_id">
+    </form>
 
     <script type="text/javascript">
-        function deleteWarehouse(id) {
-            let warehouseId = document.getElementById('warehouse_id');
-            warehouseId.setAttribute('value', id);
+        function deleteProduct(id) {
+            let productId = document.getElementById('product_id');
+            productId.setAttribute('value', id);
             document.getElementById("deleteForm").submit();
         }
     </script>
