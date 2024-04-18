@@ -37,4 +37,7 @@ Route::post('/warehouse/store', [WarehouseController::class, 'storeWarehouse'])-
 
 Route::post('/warehouse/delete', [WarehouseController::class, 'deleteWareHouse'])->name('warehouse.delete');
 
+Route::get('/test', [\App\Http\Controllers\GenerateController::class, 'createWarehouses']);
+
+
 
