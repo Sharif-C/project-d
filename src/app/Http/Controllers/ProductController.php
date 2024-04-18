@@ -34,7 +34,7 @@ class ProductController extends Controller
     }
 
     public function addSerialNumberView(){
-        $products = Product::select('_id', 'name')->get();
+        $products = Product::select('_id', 'name', 'serial_numbers')->get();
         $warehouses = Warehouse::select('_id', 'name')->get();
 
         return view('product.add-serial-number', compact('products','warehouses'));
