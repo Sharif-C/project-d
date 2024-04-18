@@ -8,7 +8,7 @@ use MongoDB\Laravel\Eloquent\Model;
 
 
 /**
- * @mixin \Eloquent 
+ * @mixin \Eloquent
  * Product Model
  * @property string $name The name of the product
  * @property string $description The description of the product
@@ -37,6 +37,13 @@ class Product extends Model
         $serialNumbers = $this->serial_numbers ?? [];
         $serialNumbers[] = ['serial_number' => $serialNumber, 'warehouse_id' => $warehouseID];
         $this->serial_numbers = $serialNumbers;
+    }
+
+    public function getWarehouseName(string $warehouse_id){
+        $warehouse = Warehouse::find($warehouse_id);
+        if(!empty($warehouse)){
+            return $warehouse->name;
+        }
     }
 
 }

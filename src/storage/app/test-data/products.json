@@ -1,0 +1,42 @@
+[
+    {
+        "name": "Aquaflo Pump",
+        "description": "Efficient submersible pump for residential and commercial water pumping."
+    },
+    {
+        "name": "HydroMax Garden Pump",
+        "description": "Compact pump for garden irrigation and water features."
+    },
+    {
+        "name": "FlowMaster Utility Pump",
+        "description": "Versatile solution for shallow well and flood water removal."
+    },
+    {
+        "name": "AquaPro Sump Pump",
+        "description": "Keeps basements dry with automatic water removal."
+    },
+    {
+        "name": "JetStream Booster Pump",
+        "description": "Boosts water pressure for showers, faucets, and irrigation."
+    },
+    {
+        "name": "EcoFlow Solar Pump",
+        "description": "Solar-powered solution for remote water pumping."
+    },
+    {
+        "name": "HydroMaster Well Pump",
+        "description": "Extracts water from deep wells efficiently."
+    },
+    {
+        "name": "ClearFlow Pond Pump",
+        "description": "Maintains clean and healthy ponds with efficient filtration."
+    },
+    {
+        "name": "ProDrain Drainage Pump",
+        "description": "Portable pump for emergency water removal."
+    },
+    {
+        "name": "AeroJet Fountain Pump",
+        "description": "Creates stunning water features and fountains."
+    }
+]
