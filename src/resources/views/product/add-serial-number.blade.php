@@ -61,6 +61,9 @@
                             <div class="text-left font-semibold">Product</div>
                         </th>
                         <th class="p-2">
+                            <div class="text-left font-semibold">Warehouse</div>
+                        </th>
+                        <th class="p-2">
                             <div class="text-center font-semibold">Delete</div>
                         </th>
                     </tr>
@@ -80,6 +83,9 @@
                                     </td>
                                     <td class="p-2">
                                         <div class="font-medium text-gray-800">{{$product->name}}</div>
+                                    </td>
+                                    <td class="p-2">
+                                        <div class="font-medium text-gray-800">{{$product->getWarehouseName($serialNumber['warehouse_id'])}}</div>
                                     </td>
                                     <td class="p-2">
                                         <div class="flex justify-center">
