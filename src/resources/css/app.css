@@ -6,3 +6,11 @@
 .default-button{
     @apply mt-2 p-2 bg-[#88327D] text-white rounded hover:bg-[#571d4f] duration-200 ease-in-out
 }
+
+.trademark-color{
+    @apply text-[#88327D]
+}
+
+.nav-button{
+    @apply text-white hover:bg-white/50 p-2 rounded duration-200 ease-in-out
+}

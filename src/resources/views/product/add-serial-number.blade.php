@@ -27,7 +27,7 @@
                     @endforeach
                 </select>
             </div>
-            <button class="rounded bg-emerald-400 text-white py-2 px-3">Save</button>
+            <button class="default-button">Save</button>
         </form>
 
         @if(session()->has('success'))
