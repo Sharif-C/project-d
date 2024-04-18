@@ -7,12 +7,12 @@ use App\Models\Product;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('index');
 });
 
-Route::get('/manage-product', [ProductController::class, 'addProductView']);
+Route::get('/manage-product', [ProductController::class, 'addProductView'])->name('manage.products');
 
-Route::get('/product/add-serial-number', [ProductController::class, 'addSerialNumberView']);
+Route::get('/product/add-serial-number', [ProductController::class, 'addSerialNumberView'])->name('manage.serial-numbers');
 Route::post('/product/store-serial-number', [ProductController::class, 'storeSerialNumber'])->name('product.store-serial-number');
 
 
@@ -31,7 +31,7 @@ Route::middleware('auth')->group(function () {
 require __DIR__ . '/auth.php';
 
 
-Route::get('/manage-warehouse', [WarehouseController::class, 'manageWarehouseView']);
+Route::get('/manage-warehouse', [WarehouseController::class, 'manageWarehouseView'])->name('manage.warehouses');
 
 Route::post('/warehouse/store', [WarehouseController::class, 'storeWarehouse'])->name('warehouse.store');
 
