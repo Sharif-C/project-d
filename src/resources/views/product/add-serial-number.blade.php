@@ -1,5 +1,23 @@
 @extends('layouts.main')
 @section('content')
+
+    <x-popup.form key="delete">
+        <x-slot:heading>
+            Are you certain you want to delete this serial number?
+        </x-slot:heading>
+
+        <x-slot:form>
+            <form action="{{route('product.delete-serial-number')}}" METHOD="POST" enctype="multipart/form-data">
+                @csrf
+                <input id="delete-serial-number" name="serial_number" type="text" required readonly hidden>
+                <input id="delete-product-id" name="product_id" type="text" required readonly hidden/>
+                <button class="cancel-btn">Delete</button>
+            </form>
+        </x-slot:form>
+    </x-popup.form>
+
+
+
     <div class="m-auto bg-white p-4 w-fit rounded">
         <h1 class="text-2xl mb-2 text-center">Add serial number</h1>
 
@@ -90,7 +108,7 @@
                                     <td class="p-2">
                                         <div class="flex justify-center">
                                             <!-- Delete button with data-id attribute -->
-                                            <button class="delete-button">
+                                            <button class="delete-button" onclick="showPopup('{{$product->_id}}', '{{$serialNumber['serial_number']}}')">
                                                 <x-heroicon-o-trash class="w-6 h-6 text-gray-500 hover:text-rose-500 duration-200 ease-in-out"/>
                                             </button>
                                         </div>
@@ -112,8 +130,10 @@
 {{--    </form>--}}
 
     <script type="text/javascript">
-        function deleteSerialNumber(id) {
-            // $("#warehouse_id").val(id);
+        function showPopup(productId, serialNumber) {
+            $('#delete-serial-number').val(serialNumber);
+            $('#delete-product-id').val(productId);
+            $('.popup-delete').show();
         }
     </script>
 

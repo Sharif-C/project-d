@@ -14,6 +14,7 @@ Route::get('/manage-product', [ProductController::class, 'addProductView'])->nam
 
 Route::get('/product/add-serial-number', [ProductController::class, 'addSerialNumberView'])->name('manage.serial-numbers');
 Route::post('/product/store-serial-number', [ProductController::class, 'storeSerialNumber'])->name('product.store-serial-number');
+Route::post('/product/delete-serial-number', [ProductController::class, 'deleteSerialNumber'])->name('product.delete-serial-number');
 
 
 Route::post('/store-product', [ProductController::class, 'store'])->name('product.store');

@@ -39,6 +39,23 @@ class Product extends Model
         $this->serial_numbers = $serialNumbers;
     }
 
+    public function deleteSerialNumber(string $serialNumber){
+        $serialNumbers = $this?->serial_numbers;
+
+        if(empty($serialNumbers)){
+            return false;
+        }
+
+        $collection = collect($serialNumbers);
+        $filtered = $collection->reject(function ($value, $key) use($serialNumber) {
+            $serialNumberObj = $value['serial_number'] ?? null;
+            return !empty($serialNumberObj) && $serialNumberObj === $serialNumber;
+        });
+
+        $this->serial_numbers = $filtered->values()->toArray();
+        return $this->save();
+    }
+
     public function getWarehouseName(string $warehouse_id){
         $warehouse = Warehouse::find($warehouse_id);
         if(!empty($warehouse)){

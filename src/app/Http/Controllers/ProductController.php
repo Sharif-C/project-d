@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
 {
@@ -43,7 +44,7 @@ class ProductController extends Controller
     public function storeSerialNumber(Request $request){
         $request->validate([
             'product_id' => 'required|exists:products,_id',
-            'serial_number' => 'required|string|lowercase|unique:products,serial_numbers.serial_number',
+            'serial_number' => 'required|string|lowercase|unique:products,serial_numbers.serial_number', // TODO
             'warehouse_id' => 'required|string|exists:warehouses,_id',
         ]);
 
@@ -64,5 +65,35 @@ class ProductController extends Controller
         }
         $product->delete();
             return redirect()->back()->with("success_delete","Product deleted successful");
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    public function deleteSerialNumber(Request $request){
+        $request->validate([
+            'product_id' => 'required|exists:products,_id',
+        ]);
+
+        $product_id = $request->input('product_id');
+        $serial_number = $request->input('serial_number');
+
+        $serialNumberExists= Product::where('_id',$product_id)->where('serial_numbers.serial_number', $serial_number)->first();
+        if(!$serialNumberExists){
+            throw ValidationException::withMessages(['errors' => "Serial number '{$serial_number}' not found with the selected product not found."]);
+        }
+
+        try {
+            $product = Product::find($product_id);
+            $deleted = $product->deleteSerialNumber($serial_number);
+            if(!$deleted){
+                throw ValidationException::withMessages(['errors' => "Serial number '{$serial_number}' could not be deleted."]);
+            }
+
+            return redirect()->back()->with('success', "Serial number '$serial_number' deleted!");
+
+        }catch(Exception $e){
+            return "error occurred";
+        }
     }
 }

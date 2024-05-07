@@ -14,3 +14,11 @@
 .nav-button{
     @apply text-white hover:bg-white/50 p-2 rounded duration-200 ease-in-out
 }
+
+.confirm-btn{
+    @apply mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700
+}
+
+.cancel-btn{
+    @apply mt-4 bg-rose-500 text-white px-4 py-2 rounded hover:bg-rose-700
+}

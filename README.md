@@ -20,3 +20,6 @@
 
 ## Clear views
 `docker compose exec php php artisan view:clear`
+
+## Generate ide-helper vars
+`docker compose exec php php artisan ide-helper:generate`
