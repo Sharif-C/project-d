@@ -10,15 +10,26 @@ Route::get('/', function () {
     return view('index');
 });
 
+// PRODUCT MANAGEMENT FLOW
 Route::get('/manage-product', [ProductController::class, 'addProductView'])->name('manage.products');
-
-Route::get('/product/add-serial-number', [ProductController::class, 'addSerialNumberView'])->name('manage.serial-numbers');
-Route::post('/product/store-serial-number', [ProductController::class, 'storeSerialNumber'])->name('product.store-serial-number');
-Route::post('/product/delete-serial-number', [ProductController::class, 'deleteSerialNumber'])->name('product.delete-serial-number');
-
-
 Route::post('/store-product', [ProductController::class, 'store'])->name('product.store');
 Route::post('/product/delete', [ProductController::class, 'deleteProduct'])->name('product.delete');
+
+// PRODUCT SERIAL NUMBER MANAGEMENT FLOW
+Route::get('/product/serial-number/manage', [ProductController::class, 'addSerialNumberView'])->name('manage.serial-numbers');
+Route::get('/product/{product_id}/serial-number/{serial_number}/view', [ProductController::class, 'updateSerialNumberView'])->name('view.serial-number');
+
+Route::post('/product/store-serial-number', [ProductController::class, 'storeSerialNumber'])->name('product.store-serial-number');
+Route::post('/product/serial_number/update', [ProductController::class, 'updateSerialNumberAction'])->name('update.serial-number');
+Route::post('/product/serial_number/delete', [ProductController::class, 'deleteSerialNumber'])->name('product.delete-serial-number');
+
+// WAREHOUSE MANAGEMENT FLOW
+Route::get('/manage-warehouse', [WarehouseController::class, 'manageWarehouseView'])->name('manage.warehouses');
+Route::post('/warehouse/store', [WarehouseController::class, 'storeWarehouse'])->name('warehouse.store');
+Route::post('/warehouse/delete', [WarehouseController::class, 'deleteWareHouse'])->name('warehouse.delete');
+
+
+// GENERATED ROUTES
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -31,14 +42,4 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__ . '/auth.php';
 
-
-Route::get('/manage-warehouse', [WarehouseController::class, 'manageWarehouseView'])->name('manage.warehouses');
-
-Route::post('/warehouse/store', [WarehouseController::class, 'storeWarehouse'])->name('warehouse.store');
-
-Route::post('/warehouse/delete', [WarehouseController::class, 'deleteWareHouse'])->name('warehouse.delete');
-
 Route::get('/test', [\App\Http\Controllers\GenerateController::class, 'createWarehouses']);
-
-
-

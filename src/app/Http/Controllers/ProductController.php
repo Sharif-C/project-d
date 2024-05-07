@@ -38,7 +38,7 @@ class ProductController extends Controller
         $products = Product::select('_id', 'name', 'serial_numbers')->get();
         $warehouses = Warehouse::select('_id', 'name')->get();
 
-        return view('product.add-serial-number', compact('products','warehouses'));
+        return view('product.serial-number.manage', compact('products','warehouses'));
     }
 
     /**
@@ -47,7 +47,7 @@ class ProductController extends Controller
     public function storeSerialNumber(Request $request){
         $request->validate([
             'product_id' => 'required|exists:products,_id',
-            'serial_number' => 'required|string|lowercase', // TODO
+            'serial_number' => 'required|string|lowercase',
             'warehouse_id' => 'required|string|exists:warehouses,_id',
         ]);
 
@@ -97,7 +97,8 @@ class ProductController extends Controller
         try {
             $product = Product::find($product_id);
             $deleted = $product->deleteSerialNumber($serial_number);
-            if(!$deleted){
+
+            if($deleted <1){
                 throw ValidationException::withMessages(['errors' => "Serial number '{$serial_number}' could not be deleted."]);
             }
 
@@ -106,5 +107,52 @@ class ProductController extends Controller
         }catch(Exception $e){
             return "error occurred";
         }
+    }
+
+    public function updateSerialNumberView(Request $request){
+        $productId = $request->product_id;
+        $serialNumber = $request->serial_number;
+
+        $product = Product::where('_id', $productId)
+            ->where('serial_numbers.serial_number', $serialNumber)
+            ->project([
+                'name' => 1,
+                'serial_numbers.$' => 1 ,
+            ])
+            ->first();
+
+        if(!$product) return "not found"; //TODO: make nice redirect
+
+        $warehouses = Warehouse::all();
+
+
+        return view('product.serial-number.update', compact('product', 'warehouses'));
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    public function updateSerialNumberAction(Request $r){
+        $r->validate([
+            'product_id' => 'required|exists:products,_id',
+            'serial_number' => 'required|string|lowercase|exists:products,serial_numbers.serial_number',
+            'warehouse_id' => 'required|string|exists:warehouses,_id',
+        ]);
+
+        $productId = $r->product_id;
+        $serialNumber = $r->serial_number;
+        $warehouseId = $r->warehouse_id;
+
+        $updated = Product::where('_id', $productId)
+            ->where('serial_numbers.serial_number', $serialNumber)
+            ->update(
+                ['$set' => ['serial_numbers.$.warehouse_id' => $warehouseId]]
+            );
+
+        if(empty($updated)){
+            throw ValidationException::withMessages(['errors' => "Failed to update serial number."]);
+        }
+
+        return redirect()->back()->with('success', 'Serial number updated!');
     }
 }

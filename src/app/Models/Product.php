@@ -61,4 +61,36 @@ class Product extends Model
         }
     }
 
+    public function warehouse(): Warehouse|null
+    {
+        $warehouse_id = $this?->serial_numbers[0]['warehouse_id'] ?? null;
+        if (empty($warehouse_id)) return null;
+
+        return Warehouse::find($warehouse_id);
+    }
+
+    // TODO: implement for multiple selection
+    private function futureFeature($product_id){
+
+//        Single first update
+        //        DB::collection('products')
+        //            ->where('_id', $product_id)
+        //            ->whereIn('serial_numbers.serial_number', ["2"])
+        //            ->update(
+        //                ['$set' => ['serial_numbers.$.warehouse_id' => 8888]]
+        //            );
+
+
+        $newWarehouseId = 78;
+
+        $update = ['$set' => ['serial_numbers.$[sid].warehouse_id' => $newWarehouseId]];
+        $filters = ['arrayFilters' => [['sid.serial_number' => ['$in' => ["3", "2"]]]]];
+
+        $result = Product::where('_id', $product_id)
+            ->update(
+                $update,
+                $filters
+            );
+    }
+
 }

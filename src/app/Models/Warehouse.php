@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use MongoDB\Laravel\Eloquent\Builder;
 use MongoDB\Laravel\Eloquent\Model;
+use MongoDB\Laravel\Relations\HasMany;
 
 class Warehouse extends Model
 {
@@ -13,6 +14,11 @@ class Warehouse extends Model
     protected $connection = 'mongodb';
     protected $collection = 'warehouses';
     protected $fillable = ['name', 'address', 'city', 'zip_code', 'country', 'street', 'house_number'];
+
+    public function serialNumbers() : HasMany
+    {
+        return $this->hasMany(Product::class, 'serial_numbers.warehouse_id', '_id');
+    }
 
     public function GetAddress(): string
     {
