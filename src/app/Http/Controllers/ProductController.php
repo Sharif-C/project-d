@@ -41,12 +41,23 @@ class ProductController extends Controller
         return view('product.add-serial-number', compact('products','warehouses'));
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function storeSerialNumber(Request $request){
         $request->validate([
             'product_id' => 'required|exists:products,_id',
-            'serial_number' => 'required|string|lowercase|unique:products,serial_numbers.serial_number', // TODO
+            'serial_number' => 'required|string|lowercase', // TODO
             'warehouse_id' => 'required|string|exists:warehouses,_id',
         ]);
+
+        $product_id = $request->input('product_id');
+        $serial_number = $request->input('serial_number');
+
+        $hasSerialNumber = Product::where('_id', $product_id)->where('serial_numbers.serial_number', $serial_number)->exists();
+        if($hasSerialNumber){
+            throw ValidationException::withMessages(['errors' => "Serial number $serial_number already exists in this product collection."]);
+        }
 
         $product = Product::find($request->input('product_id'));
         $product->addSerialNumber($request->input('serial_number'), $request->input('warehouse_id'));
