@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\DB;
 use MongoDB\Laravel\Eloquent\Builder;
 use MongoDB\Laravel\Eloquent\Model;
 
@@ -39,21 +40,18 @@ class Product extends Model
         $this->serial_numbers = $serialNumbers;
     }
 
-    public function deleteSerialNumber(string $serialNumber){
+    public function deleteSerialNumber(string $serialNumber) : int{
         $serialNumbers = $this?->serial_numbers;
 
         if(empty($serialNumbers)){
             return false;
         }
 
-        $collection = collect($serialNumbers);
-        $filtered = $collection->reject(function ($value, $key) use($serialNumber) {
-            $serialNumberObj = $value['serial_number'] ?? null;
-            return !empty($serialNumberObj) && $serialNumberObj === $serialNumber;
-        });
+        $deletedAmount = DB::collection('products')
+            ->where('_id', $this->_id)
+            ->pull('serial_numbers', ['serial_number' => $serialNumber]);
 
-        $this->serial_numbers = $filtered->values()->toArray();
-        return $this->save();
+        return $deletedAmount;
     }
 
     public function getWarehouseName(string $warehouse_id){
