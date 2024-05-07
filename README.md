@@ -20,3 +20,13 @@
 
 ## Clear views
 `docker compose exec php php artisan view:clear`
+
+## get vender map
+`docker compose run --rm composer install`
+
+## update 
+`docker compose run --rm composer update`
+
+## node packetes
+`docker compose run --rm node npm install`
+`docker compose run --rm node npm update`
