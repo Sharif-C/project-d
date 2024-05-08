@@ -31,6 +31,3 @@
         @endforeach
     </div>
 @stop
-
-
-{{--TODO: add nice error and success messages --}}

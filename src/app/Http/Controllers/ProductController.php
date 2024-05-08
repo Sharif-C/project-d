@@ -136,7 +136,7 @@ class ProductController extends Controller
             ])
             ->first();
 
-        if(!$product) return "not found"; //TODO: make nice redirect
+        if(!$product) return redirect()->back();
 
         $warehouses = Warehouse::all();
 
