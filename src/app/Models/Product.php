@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\DB;
 use MongoDB\Laravel\Eloquent\Builder;
 use MongoDB\Laravel\Eloquent\Model;
 
@@ -39,11 +40,57 @@ class Product extends Model
         $this->serial_numbers = $serialNumbers;
     }
 
+    public function deleteSerialNumber(string $serialNumber) : int{
+        $serialNumbers = $this?->serial_numbers;
+
+        if(empty($serialNumbers)){
+            return false;
+        }
+
+        $deletedAmount = DB::collection('products')
+            ->where('_id', $this->_id)
+            ->pull('serial_numbers', ['serial_number' => $serialNumber]);
+
+        return $deletedAmount;
+    }
+
     public function getWarehouseName(string $warehouse_id){
         $warehouse = Warehouse::find($warehouse_id);
         if(!empty($warehouse)){
             return $warehouse->name;
         }
+    }
+
+    public function warehouse(): Warehouse|null
+    {
+        $warehouse_id = $this?->serial_numbers[0]['warehouse_id'] ?? null;
+        if (empty($warehouse_id)) return null;
+
+        return Warehouse::find($warehouse_id);
+    }
+
+    // TODO: implement for multiple selection
+    private function futureFeature($product_id){
+
+//        Single first update
+        //        DB::collection('products')
+        //            ->where('_id', $product_id)
+        //            ->whereIn('serial_numbers.serial_number', ["2"])
+        //            ->update(
+        //                ['$set' => ['serial_numbers.$.warehouse_id' => 8888]]
+        //            );
+
+
+        $newWarehouseId = 78;
+
+        $update = ['$set' => ['serial_numbers.$[sid].warehouse_id' => $newWarehouseId]];
+        $filters = ['arrayFilters' => [['sid.serial_number' => ['$in' => ["3", "2"]]]]];
+
+        $result = Product::where('_id', $product_id)
+            ->update(
+                $update,
+                $filters
+            );
     }
 
 }
