@@ -15,6 +15,10 @@
             @if(session()->has('success'))
                 <p class="p-2 text-emerald-500">{{ session('success') }}</p>
             @endif
+
+            @foreach ($errors->all() as $error)
+                <p class="p-2 text-rose-500">{{ $error }}</p>
+            @endforeach
         </form>
     </section>
 @stop
