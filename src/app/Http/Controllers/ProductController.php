@@ -135,24 +135,44 @@ class ProductController extends Controller
     public function updateSerialNumberAction(Request $r){
         $r->validate([
             'product_id' => 'required|exists:products,_id',
-            'serial_number' => 'required|string|lowercase|exists:products,serial_numbers.serial_number',
+            'old_serial_number' => 'required|string|lowercase|exists:products,serial_numbers.serial_number',
+            'new_serial_number' => 'required|string|lowercase',
             'warehouse_id' => 'required|string|exists:warehouses,_id',
         ]);
 
-        $productId = $r->product_id;
-        $serialNumber = $r->serial_number;
+        $product_id = $r->product_id;
+        $new_serial_number = $r->new_serial_number;
+        $old_serial_number = $r->old_serial_number;
         $warehouseId = $r->warehouse_id;
 
-        $updated = Product::where('_id', $productId)
-            ->where('serial_numbers.serial_number', $serialNumber)
+        if($old_serial_number !== $new_serial_number){
+            $this->validateSerialNumber($product_id, $new_serial_number);
+        }
+
+        $updated = Product::where('_id', $product_id)
+            ->where('serial_numbers.serial_number', $old_serial_number)
             ->update(
-                ['$set' => ['serial_numbers.$.warehouse_id' => $warehouseId]]
+                ['$set' => [
+                    'serial_numbers.$.warehouse_id' => $warehouseId,
+                    'serial_numbers.$.serial_number' => $new_serial_number,
+                    ]
+                ]
             );
 
         if(empty($updated)){
             throw ValidationException::withMessages(['errors' => "Failed to update serial number."]);
         }
 
-        return redirect()->back()->with('success', 'Serial number updated!');
+        return to_route('view.serial-number', ['product_id' => $product_id, 'serial_number' => $new_serial_number])->with('success', 'Serial number updated!');
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    private function validateSerialNumber(string $product_id, string $serial_number){
+        $hasSerialNumber = Product::where('_id', $product_id)->where('serial_numbers.serial_number', $serial_number)->exists();
+        if($hasSerialNumber){
+            throw ValidationException::withMessages(['errors' => "Serial number $serial_number already exists in this product collection."]);
+        }
     }
 }

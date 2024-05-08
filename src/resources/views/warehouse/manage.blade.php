@@ -6,20 +6,20 @@
     <section class="flex flex-col justify-start gap-4 p-2 max-w-5xl m-auto">
 
         <form action="{{route("warehouse.store")}}" method="POST" class="bg-white p-6 rounded flex flex-col gap-2 w-fit shadow-lg">
-            <h2 class="font-semibold text-gray-800">Add warehouse</h2>
+            <h2 class="default-h2">Add warehouse</h2>
 
             @csrf
-            <input class="rounded" type="text" name="name" placeholder="Name" required>
+            <input type="text" name="name" placeholder="Name" class="default-input" required>
             <div class="flex gap-2">
-                <input class="rounded w-[200px]" type="text" name="street" placeholder="Street" required>
-                <input class="rounded w-[120px]" type="text" name="house_number" placeholder="House nr." required>
+                <input class="default-input !w-[220px]" type="text" name="street" placeholder="Street" required>
+                <input class="default-input !w-[180px]" type="text" name="house_number" placeholder="House nr." required>
             </div>
-            <input class="rounded" type="text" name="zip_code" placeholder="Zipcode" required>
-            <input class="rounded" type="text" name="city" placeholder="City" required>
-            <input class="rounded" type="text" name="country" placeholder="Country" required>
+            <input class="default-input" type="text" name="zip_code" placeholder="Zipcode" required>
+            <input class="default-input" type="text" name="city" placeholder="City" required>
+            <input class="default-input" type="text" name="country" placeholder="Country" required>
 
 
-            <button class="default-button">Save</button>
+            <button class="default-button w-fit">Save</button>
 
             @if(session()->has('success_add'))
                 <p class="p-2 text-emerald-500">{{session('success_add')}}</p>

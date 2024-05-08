@@ -24,8 +24,8 @@
         <form action="{{route('product.store-serial-number')}}" method="POST" class="flex flex-col gap-2 mb-4">
             @csrf
             <div class="flex flex-col">
-                <label for="product_id">Product</label>
-                <select name="product_id" id="">
+                <label for="product_id" class="default-label">Product</label>
+                <select name="product_id" class="default-input">
                     @foreach($products as $w)
                         <option value="{{$w->_id}}">{{$w->name}}</option>
                     @endforeach
@@ -33,13 +33,13 @@
             </div>
 
             <div class="flex flex-col">
-                <label for="serial_number">Serial number</label>
-                <input type="text" name="serial_number" id="" placeholder="Serial number" required>
+                <label for="serial_number" class="default-label">Serial number</label>
+                <input type="text" name="serial_number" id="" placeholder="Serial number" class="default-input" required>
             </div>
 
             <div class="flex flex-col">
-                <label for="warehouse_id">Warehouse</label>
-                <select name="warehouse_id" id="">
+                <label for="warehouse_id" class="default-label">Warehouse</label>
+                <select name="warehouse_id" class="default-input">
                     @foreach($warehouses as $w)
                         <option value="{{$w->_id}}">{{$w->name}}</option>
                     @endforeach
@@ -98,7 +98,7 @@
                                     </td>
                                     <td class="p-2">
                                         <a href="{{route('view.serial-number', ['product_id' => $product->_id, 'serial_number' => $serialNumber['serial_number']])}}">
-                                            <div class="font-medium text-gray-800 hover:text-indigo-500 ease-in-out duration-200">{{$serialNumber['serial_number']}}</div>
+                                            <div class="font-medium text-gray-800 hover:text-[#88327D] ease-in-out duration-200">{{$serialNumber['serial_number']}}</div>
                                         </a>
                                     </td>
                                     <td class="p-2">
