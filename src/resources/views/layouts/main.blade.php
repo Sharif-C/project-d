@@ -20,11 +20,9 @@
     </head>
     <body class="font-sans antialiased flex">
         <x-navigation/>
-        <div class="m-0 bg-gray-200 py-4 w-full">
+        <main class="m-0 bg-gray-200 py-3 w-full h-[100vh]">
             <!-- Page Content -->
-            <main class="min-h-[100vh]">
-                @yield('content')
-            </main>
-        </div>
+            @yield('content')
+        </main>
     </body>
 </html>

@@ -30,4 +30,26 @@
             <p class="mt-2 text-rose-400">{{$e}}</p>
         @endforeach
     </div>
+
+    <div class="m-12 mx-auto mb-0 h-[540px] w-[80%] rounded ">
+        {{--TODO: add route for comment handling--}}
+        <form action="" class="flex flex-col gap-2 mb-4">
+            <textarea name="comment" cols="30" rows="2" class="default-input" placeholder="Write a comment..."></textarea>
+            <button class="default-button w-fit !mt-1">Save</button>
+        </form>
+
+        <section class="comment-section flex flex-col gap-4 border-t-2 border-gray-300 pt-3 pr-5 overflow-auto h-[390px]">
+            @for($i=1; $i<12; $i++)
+                <div class="comment-item">
+                    <h3 class="font-semibold text-gray-800 flex flex-col text-sm ml-0.5 mb-0.5 w-full">Sharif - Admin</h3>
+                    <p class="comment-box relative">
+                        lorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsum
+
+                        <x-heroicon-s-trash class="absolute top-2 right-2 w-4 h-4 text-rose-400 hover-fx hover:text-rose-600"/>
+                    </p>
+                    <p class="font-light text-[11px] ml-0.5 mt-0.5">22:12:00 12-05-2024</p>
+                </div>
+            @endfor
+        </section>
+    </div>
 @stop
