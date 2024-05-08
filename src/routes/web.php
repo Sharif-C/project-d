@@ -13,6 +13,12 @@ Route::get('/', function () {
 // PRODUCT MANAGEMENT FLOW
 Route::get('/manage-product', [ProductController::class, 'addProductView'])->name('manage.products');
 Route::post('/store-product', [ProductController::class, 'store'])->name('product.store');
+
+Route::get('/product/edit/{product}', [ProductController::class, 'editProductView'])
+    ->name('product.edit')
+    ->missing(function (){return to_route('manage.products');});
+
+Route::put('/product/{product}', [ProductController::class, 'editProduct'])->name('product.update');
 Route::post('/product/delete', [ProductController::class, 'deleteProduct'])->name('product.delete');
 
 // PRODUCT SERIAL NUMBER MANAGEMENT FLOW

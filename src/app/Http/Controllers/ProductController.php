@@ -66,6 +66,24 @@ class ProductController extends Controller
         return redirect()->back()->with('success', 'Serial number added!');
 
     }
+    public function editProductView(Product $product)
+    {
+        return view('product.edit-product', compact('product'));
+    }
+    public function editProduct(Request $request, Product $product)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:255',
+        ]);
+
+        $product->name = $request->input('name');
+        $product->description = $request->input('description');
+        $product->save();
+
+        return redirect()->back()->with('success', 'Product Update succes!');
+    }
+
     public function deleteProduct(Request $request)
     {
         $productID = $request->input('product_id');
