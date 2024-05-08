@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
@@ -22,7 +23,7 @@ class ProductController extends Controller
         ]);
 
         $data = [
-            'name' => strtolower($request->input('name')),
+            'name' => $request->input('name'),
         ];
 
         if($request->filled('description')){
@@ -156,7 +157,7 @@ class ProductController extends Controller
         ]);
 
         $product_id = $r->product_id;
-        $new_serial_number = $r->new_serial_number;
+        $new_serial_number = Str::slug($r->new_serial_number);
         $old_serial_number = $r->old_serial_number;
         $warehouseId = $r->warehouse_id;
 
