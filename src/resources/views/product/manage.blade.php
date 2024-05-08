@@ -14,6 +14,10 @@
             @if(session()->has('success'))
                 <p class="p-2 text-emeralds-500">{{session('success')}}</p>
             @endif
+
+            @foreach($errors->all() as $e)
+                <p class="p-2 text-rose-500">{{$e}}</p>
+            @endforeach
         </form>
 
 
