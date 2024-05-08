@@ -12,7 +12,7 @@
             <button class="default-button">Save</button>
 
             @if(session()->has('success'))
-                <p class="p-2 text-emerald-500">{{session('success')}}</p>
+                <p class="p-2 text-emeralds-500">{{session('success')}}</p>
             @endif
         </form>
 
@@ -52,7 +52,9 @@
                                 <input type="checkbox" class="h-5 w-5" value="id-1" @click="toggleCheckbox($el, 2890.66)"/>
                             </td>
                             <td class="p-2">
-                                <div class="font-medium text-gray-800">{{$product->name}}</div>
+                                <div class="font-medium text-gray-800">
+                                    <a href="{{ route('product.edit', $product->id) }}">{{ $product->name }}</a>
+                                </div>
                             </td>
                             <td class="p-2">
                                 <div class="font-medium text-gray-800">
