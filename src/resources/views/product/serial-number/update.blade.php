@@ -8,8 +8,8 @@
 
         <form action="{{route('update.serial-number')}}" method="POST" class="flex flex-col gap-2 mb-4">
         @csrf
-            <input type="text" name="product_id" value="{{request('product_id')}}" readonly>
-            <input type="text" name="serial_number" value="{{request('serial_number')}}" readonly>
+            <input type="text" name="product_id" value="{{request('product_id')}}" readonly hidden>
+            <input type="text" name="serial_number" value="{{request('serial_number')}}" readonly hidden>
             <label for="warehouse_id">Warehouse</label>
             <select name="warehouse_id" id="">
                 @foreach($warehouses as $w)

@@ -18,7 +18,7 @@
 
 
 
-    <div class="m-auto bg-white p-4 w-fit rounded">
+    <div class="m-auto bg-white p-4 w-fit rounded min-w-[80%]">
         <h1 class="text-2xl mb-2 text-center">Manage serial number</h1>
 
         <form action="{{route('product.store-serial-number')}}" method="POST" class="flex flex-col gap-2 mb-4">
