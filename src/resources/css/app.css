@@ -11,6 +11,10 @@
     @apply text-[#88327D]
 }
 
+.trademark-color-hover{
+    @apply hover:text-[#88327D]
+}
+
 .nav-button{
     @apply text-white hover:bg-white/50 p-2 rounded duration-200 ease-in-out
 }

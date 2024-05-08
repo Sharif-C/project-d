@@ -39,7 +39,7 @@
                             <div class="text-left font-semibold">Description</div>
                         </th>
                         <th class="p-2">
-                            <div class="text-center font-semibold">Delete</div>
+                            <div class="text-center font-semibold">Action</div>
                         </th>
                     </tr>
                     </thead>
@@ -49,12 +49,14 @@
                     @foreach($products as $product)
                         <tr>
                             <td class="p-2">
-                                <input type="checkbox" class="h-5 w-5" value="id-1" @click="toggleCheckbox($el, 2890.66)"/>
+                                <input type="checkbox" class="h-5 w-5" value="id-1"/>
                             </td>
                             <td class="p-2">
-                                <div class="font-medium text-gray-800">
-                                    <a href="{{ route('product.edit', $product->id) }}">{{ $product->name }}</a>
-                                </div>
+                                <a href="{{ route('product.edit', $product->id) }}">
+                                    <div class="font-medium text-gray-800 trademark-color-hover">
+                                        {{ $product->name }}
+                                    </div>
+                                </a>
                             </td>
                             <td class="p-2">
                                 <div class="font-medium text-gray-800">
@@ -62,7 +64,10 @@
                                 </div>
                             </td>
                             <td class="p-2">
-                                <div class="flex justify-center">
+                                <div class="flex justify-center gap-2">
+                                    <a href="{{ route('product.edit', $product->id) }}">
+                                        <x-heroicon-o-pencil-square class="w-6 h-6 text-gray-500 hover:text-indigo-500 duration-200 ease-in-out cursor-pointer"/>
+                                    </a>
                                     <!-- Delete button with data-id attribute -->
                                     <button class="delete-button" onclick="deleteProduct('{{$product->id}}')">
                                         <x-heroicon-o-trash class="w-6 h-6 text-gray-500 hover:text-rose-500 duration-200 ease-in-out"/>
