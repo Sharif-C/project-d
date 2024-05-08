@@ -54,10 +54,7 @@ class ProductController extends Controller
         $product_id = $request->input('product_id');
         $serial_number = $request->input('serial_number');
 
-        $hasSerialNumber = Product::where('_id', $product_id)->where('serial_numbers.serial_number', $serial_number)->exists();
-        if($hasSerialNumber){
-            throw ValidationException::withMessages(['errors' => "Serial number $serial_number already exists in this product collection."]);
-        }
+        $this->validateSerialNumber($product_id,$serial_number);
 
         $product = Product::find($request->input('product_id'));
         $product->addSerialNumber($request->input('serial_number'), $request->input('warehouse_id'));
