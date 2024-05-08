@@ -7,8 +7,9 @@
             <h2 class="font-semibold text-gray-800">Edit product</h2>
             @csrf
             @method('PUT')
-
+            <div class="text-left">Name</div>
             <input class="rounded" type="text" name="name" value="{{ old('name', $product->name) }}" placeholder="Name" required>
+            <div class="text-left">Description</div>
             <input class="rounded" type="text" name="description" value="{{ old('description', $product->description) }}" placeholder="Description">
             <button class="default-button">Update</button>
 
