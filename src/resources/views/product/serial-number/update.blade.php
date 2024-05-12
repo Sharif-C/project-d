@@ -1,3 +1,7 @@
+@php
+    $selected_serial_number = request('serial_number');
+@endphp
+
 @extends('layouts.main')
 @section('content')
     <div class="m-auto bg-white p-4 w-fit rounded min-w-[80%]">
@@ -6,12 +10,12 @@
         </div>
 
         <form action="{{route('update.serial-number')}}" method="POST" class="flex flex-col gap-2 mb-4">
-        @csrf
+            @csrf
             <input type="text" name="product_id" value="{{request('product_id')}}" readonly hidden>
-            <input type="text" name="old_serial_number" value="{{request('serial_number')}}" readonly hidden>
+            <input type="text" name="old_serial_number" value="{{$selected_serial_number}}" readonly hidden>
 
             <label for="new_serial_number" class="default-label">Serial number</label>
-            <input type="text" name="new_serial_number" value="{{request('serial_number')}}" class="default-input">
+            <input type="text" name="new_serial_number" value="{{$selected_serial_number}}" class="default-input">
 
             <label for="warehouse_id" class="default-label">Warehouse</label>
             <select name="warehouse_id" class="default-input">
@@ -35,6 +39,7 @@
         <form action="{{ route('product.comments.add', $product->id) }}" method="POST" class="flex flex-col gap-2 mb-4">
             @csrf
             <textarea name="text" cols="30" rows="2" class="default-input" placeholder="Write a comment..."></textarea>
+            <input name="serial_number" type="text" value="{{$selected_serial_number}}" hidden readonly required>
             <button type="submit" class="default-button w-fit !mt-1">Save</button>
         </form>
 

@@ -11,18 +11,26 @@ use Illuminate\Validation\ValidationException;
 class ProductController extends Controller
 {
     //comment TODO
-    public function addComment(Request $request, Product $product)
-    {
+    public function addComment(Request $request, Product $product){
+
         $request->validate([
             'text' => 'required|string|max:255',
-        ]);
+            'serial_number' => 'required|string|lowercase'
+            ]);
 
-        $product->addComment($request->text);
+        $this->validateSerialNumber(product_id: $product->id, serial_number: $request->input('serial_number'), mustExist: true);
+
+        $product->where('serial_numbers.serial_number', $request->input('serial_number'))
+            ->push('serial_numbers.$.comments', [
+                'user' => 'User',
+                'role' => 'workRole',
+                'text' => $request->input('text'),
+                'created_at' => now()->toDateTimeString(), //datetime string
+            ]);
 
         return redirect()->back()->with('success', 'Comment added successfully.');
     }
-    public function deleteComment()
-    {
+    public function deleteComment(){
         //TODO
     }
 
@@ -107,7 +115,7 @@ class ProductController extends Controller
             return "Product not Found";
         }
         $product->delete();
-            return redirect()->back()->with("success_delete","Product deleted successful");
+        return redirect()->back()->with("success_delete","Product deleted successful");
     }
 
     /**
@@ -157,7 +165,6 @@ class ProductController extends Controller
 
         $warehouses = Warehouse::all();
 
-
         return view('product.serial-number.update', compact('product', 'warehouses'));
     }
 
@@ -187,7 +194,7 @@ class ProductController extends Controller
                 ['$set' => [
                     'serial_numbers.$.warehouse_id' => $warehouseId,
                     'serial_numbers.$.serial_number' => $new_serial_number,
-                    ]
+                ]
                 ]
             );
 
@@ -201,10 +208,16 @@ class ProductController extends Controller
     /**
      * @throws ValidationException
      */
-    private function validateSerialNumber(string $product_id, string $serial_number){
+    private function validateSerialNumber(string $product_id, string $serial_number, bool $mustExist = false){
         $hasSerialNumber = Product::where('_id', $product_id)->where('serial_numbers.serial_number', $serial_number)->exists();
-        if($hasSerialNumber){
+
+//        throws error when serial numbers exists
+        if($hasSerialNumber && $mustExist === false){
             throw ValidationException::withMessages(['errors' => "Serial number $serial_number already exists in this product collection."]);
+        }
+//      throws error when serial number does not exist
+        if(!$hasSerialNumber && $mustExist === true){
+            throw ValidationException::withMessages(['errors' => "Given serial number not found in product collection."]);
         }
     }
 }
