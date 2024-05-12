@@ -10,6 +10,22 @@ use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
 {
+    //comment TODO
+    public function addComment(Request $request, Product $product)
+    {
+        $request->validate([
+            'text' => 'required|string|max:255',
+        ]);
+
+        $product->addComment($request->text);
+
+        return redirect()->back()->with('success', 'Comment added successfully.');
+    }
+    public function deleteComment()
+    {
+        //TODO
+    }
+
     public function addProductView(){
         $products = Product::select('_id', 'name', 'description', 'created_at', 'updated_at')->get();
         return view('product.manage', compact('products'));

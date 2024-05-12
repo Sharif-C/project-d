@@ -33,6 +33,30 @@ class Product extends Model
     protected $collection = 'products';
     protected $fillable = ['name', 'description', 'serial_numbers']; // serial_numbers [{serial_number: 'val', warehouse_id : 'id'}]
 
+    //Comment TODO
+    public function addComment(string $text)
+    {
+        $comment = [
+            'user' => 'User',
+            'role' => 'workRole',
+            'text' => $text,
+            'created_at' => now()->toDateTimeString(), //datetime string
+        ];
+
+        $this->serial_numbers = collect($this->serial_numbers ?? [])
+            ->map(function ($serialNumber) use ($comment) {
+                $serialNumber['comments'][] = $comment;
+                return $serialNumber;
+            })->toArray();
+
+        $this->save();
+    }
+    public function deleteComment()
+    {
+
+    }
+    //
+
     public function addSerialNumber(string $serialNumber, string $warehouseID)
     {
         $serialNumbers = $this->serial_numbers ?? [];
