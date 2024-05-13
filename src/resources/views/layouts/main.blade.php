@@ -22,7 +22,7 @@
         <x-navigation/>
         <div class="m-0 bg-gray-200 py-4 w-full">
             <!-- Page Content -->
-            <main class="h-[100vh]">
+            <main class="min-h-[100vh]">
                 @yield('content')
             </main>
         </div>

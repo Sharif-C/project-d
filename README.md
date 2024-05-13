@@ -21,7 +21,7 @@
 ## Clear views
 `docker compose exec php php artisan view:clear`
 
-## get vender map
+## get vendor map
 `docker compose run --rm composer install`
 
 ## update 
