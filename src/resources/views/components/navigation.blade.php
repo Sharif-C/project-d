@@ -21,6 +21,12 @@
                     <p>Warehouses</p>
                 </div>
             </a>
+            <a class="nav-button" href="{{route('manage.vans')}}">
+                <div class="flex gap-3 items-center">
+                    <x-heroicon-s-truck class="w-6"/>
+                    <p>Vans</p>
+                </div>
+            </a>
         </li>
     </ul>
 </nav>

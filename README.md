@@ -21,5 +21,12 @@
 ## Clear views
 `docker compose exec php php artisan view:clear`
 
-## Generate ide-helper vars
-`docker compose exec php php artisan ide-helper:generate`
+## get vendor map
+`docker compose run --rm composer install`
+
+## update 
+`docker compose run --rm composer update`
+
+## node packetes
+`docker compose run --rm node npm install`
+`docker compose run --rm node npm update`
