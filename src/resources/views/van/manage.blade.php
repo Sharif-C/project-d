@@ -7,7 +7,7 @@
 
         <form action="{{route("van.store")}}" method="POST" class="bg-white p-6 rounded flex flex-col gap-2 w-fit shadow-lg">
             <h2 class="font-semibold text-gray-800">Add van</h2>
- 
+
             @csrf
             <input class="rounded" type="text" name="licenceplate" placeholder="Licence plate" required>
             <button class="default-button">Save</button>
@@ -22,7 +22,9 @@
         <div class="mx-auto w-full rounded-sm border border-gray-200 bg-white shadow-lg">
             <header class="border-b border-gray-100 px-5 py-4">
                 <div class="font-semibold text-gray-800">Vans</div>
-                @if(session()->has('success_delete'))
+                @foreach($errors->all() as $e)
+                    <p class="p-2 text-rose-500">{{$e}}</p>
+                @endforeach                @if(session()->has('success_delete'))
                     <p class="p-2 text-emerald-500">{{session('success_delete')}}</p>
                 @endif
             </header>
