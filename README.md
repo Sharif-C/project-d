@@ -1,32 +1,37 @@
 # IMPORTANT COMMANDS
 
 ## Start and rebuild server (ONLY FOR FIRST TIME INIT)
-`docker compose up -d --build server`
+```shell
+docker compose up -d --build server
+```
 
 ## Start server
-`docker compose up -d server`
+```shell
+docker compose up -d server
+```
 
 ## Restart server
-`docker compose restart`
+```shell
+docker compose restart
+```
 
 ## Stop server
-`docker compose down`
+```shell
+docker compose down
+```
+
 
 ## Cache router
-`docker compose exec php php artisan route:cache`
+```shell
+docker compose exec php php artisan route:cache
+```
 
 ## Cache views
-`docker compose exec php php artisan view:cache`
+```shell
+docker compose exec php php artisan view:cache
+```
 
 ## Clear views
-`docker compose exec php php artisan view:clear`
-
-## get vendor map
-`docker compose run --rm composer install`
-
-## update 
-`docker compose run --rm composer update`
-
-## node packetes
-`docker compose run --rm node npm install`
-`docker compose run --rm node npm update`
+```shell
+docker compose exec php php artisan view:clear
+```
