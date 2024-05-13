@@ -1262,6 +1262,7 @@
         },
         {
             "name": "laravel/framework",
+
             "version": "v11.7.0",
             "source": {
                 "type": "git",

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\VanController;
 use App\Http\Controllers\WarehouseController;
 use App\Models\Product;
 use Illuminate\Support\Facades\Route;
@@ -49,3 +50,7 @@ Route::middleware('auth')->group(function () {
 require __DIR__ . '/auth.php';
 
 Route::get('/test', [\App\Http\Controllers\GenerateController::class, 'createWarehouses']);
+
+Route::get('/manage-van', [VanController::class, 'manageVanView'])->name('manage.vans');
+Route::post('/van/store', [VanController::class, 'storeVan'])->name('van.store');
+Route::post('/van/delete', [VanController::class, 'deleteVan'])->name('van.delete');
