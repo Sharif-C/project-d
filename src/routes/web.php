@@ -11,6 +11,8 @@ Route::get('/', function () {
     return view('index');
 });
 
+Route::post('/product/{product}/comments', [ProductController::class, 'addComment'])->name('product.comments.add');
+Route::post('/product/comment/delete', [ProductController::class, 'deleteComment'])->name('product.comment.delete');
 // PRODUCT MANAGEMENT FLOW
 Route::get('/manage-product', [ProductController::class, 'addProductView'])->name('manage.products');
 Route::post('/store-product', [ProductController::class, 'store'])->name('product.store');
@@ -48,9 +50,7 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
-
-Route::get('/test', [\App\Http\Controllers\GenerateController::class, 'createWarehouses']);
-
+// VAN VIEW
 Route::get('/manage-van', [VanController::class, 'manageVanView'])->name('manage.vans');
 Route::post('/van/store', [VanController::class, 'storeVan'])->name('van.store');
 Route::post('/van/delete', [VanController::class, 'deleteVan'])->name('van.delete');

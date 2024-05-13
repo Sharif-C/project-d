@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Controllers;
-
 use App\Models\Product;
 use App\Models\Warehouse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use function Pest\Laravel\post;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-
-class GenerateController extends Controller
+return new class extends Migration
 {
-    public function createWarehouses()
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
         $warehouses = json_decode(Storage::get('/test-data/warehouses.json'));
         foreach ($warehouses as $warehouse) {
@@ -32,7 +32,13 @@ class GenerateController extends Controller
                 'description'  => $product->description,
             ]);
         }
-
-        return 'done';
     }
-}
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        //
+    }
+};
