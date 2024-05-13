@@ -54,3 +54,7 @@ Route::get('/test', [\App\Http\Controllers\GenerateController::class, 'createWar
 Route::get('/manage-van', [VanController::class, 'manageVanView'])->name('manage.vans');
 Route::post('/van/store', [VanController::class, 'storeVan'])->name('van.store');
 Route::post('/van/delete', [VanController::class, 'deleteVan'])->name('van.delete');
+Route::get('/van/edit/{van}', [VanController::class, 'updateVanView'])
+    ->name('van.edit.view')
+    ->missing(function (){return to_route('manage.vans');});
+Route::post ("van/update", [VanController::class, "updateVanAction"])->name("van.update.action");

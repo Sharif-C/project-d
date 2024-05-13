@@ -71,9 +71,11 @@ class ProductController extends Controller
     public function editProduct(Request $request, Product $product)
     {
         $request->validate([
-            'name' => 'required|string|unique:products,name|max:255',
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:255',
         ]);
+
+//        TODO: validate product name on update
 
         $product->name = $request->input('name');
         $product->description = $request->input('description');

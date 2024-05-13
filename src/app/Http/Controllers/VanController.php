@@ -43,4 +43,21 @@ class VanController extends Controller
         $vans = Van::get();
         return view('van.manage', compact('vans'));
     }
+
+    public function updateVanView(Request $request, Van $van)
+    {
+        return view("van.update", compact("van"));
+    }
+
+    public function updateVanAction(Request $request)
+    {
+//        TODO: add validation
+
+        $updateVan = Van::find($request->van_id);
+        $updateVan->licenceplate = $request->license_plate;
+        $updateVan->save();
+
+        return redirect()->back()->with('success', 'Van updated!');
+    }
 }
+
