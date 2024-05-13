@@ -4,13 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Warehouse;
+use App\Utils\MongoDB\DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
 {
-    //comment TODO
     public function addComment(Request $request, Product $product){
 
         $request->validate([
@@ -22,16 +22,29 @@ class ProductController extends Controller
 
         $product->where('serial_numbers.serial_number', $request->input('serial_number'))
             ->push('serial_numbers.$.comments', [
-                'user' => 'User',
-                'role' => 'workRole',
+                'id' => Str::uuid()->toString(),
+                'user' => env('USER_NAME', "HR user"),
+                'role' => env('USER_ROLE', "Admin"),
                 'text' => $request->input('text'),
-                'created_at' => now()->toDateTimeString(), //datetime string
+                'created_at' => DateTime::current()
             ]);
 
-        return redirect()->back()->with('success', 'Comment added successfully.');
+        return redirect()->back()->with('success_comment_add', 'Comment added successfully.');
     }
-    public function deleteComment(){
-        //TODO
+    public function deleteComment(Request $request){
+        $product_id = $request->product_id;
+        $comment_id = $request->comment_id;
+        $serial_number = $request->serial_number;
+
+        $delete_to_mongodb = Product::where('_id', $product_id)
+            ->where('serial_numbers.serial_number', $serial_number)
+            ->pull('serial_numbers.$.comments', ['id' => $comment_id]);
+
+        if($delete_to_mongodb < 1){
+            return "nothing found";
+        }
+
+        return redirect()->back()->with('success_comment', 'Comment deleted!');
     }
 
     public function addProductView(){

@@ -41,26 +41,55 @@
             <textarea name="text" cols="30" rows="2" class="default-input" placeholder="Write a comment..."></textarea>
             <input name="serial_number" type="text" value="{{$selected_serial_number}}" hidden readonly required>
             <button type="submit" class="default-button w-fit !mt-1">Save</button>
+
+            @if(session()->has('success_comment_add'))
+                <p class="mt-2 text-sm text-emerald-400">{{session('success_comment_add')}}</p>
+            @endif
         </form>
 
         <!--existing comments -->
-        <section class="comment-section flex flex-col gap-4 border-t-2 border-gray-300 pt-3 pr-5 overflow-auto h-[390px]">
+        <section class="comment-section flex flex-col gap-3 border-t-2 border-gray-300 pt-3 pr-5 overflow-auto h-[390px]">
+            @if(session()->has('success_comment'))
+                <p class="mt-2 text-emerald-400">{{session('success_comment')}}</p>
+            @endif
 
             @foreach($product->serial_numbers ?? [] as $serialNumber)
                 @if(!empty($serialNumber['comments']))
-                    @foreach($serialNumber['comments'] as $comment)
-                        <h3 class="font-semibold text-gray-800 flex flex-col text-sm ml-0.5 mb-0.5 w-full">%User - User%</h3>
-                        <div class="comment-item">
-                            <!--text -->
-                            <p class="comment-box relative">{{ $comment['text'] }}
-                                <x-heroicon-s-trash class="absolute top-2 right-2 w-4 h-4 text-rose-400 hover-fx hover:text-rose-600"/>
-                            </p>
-
-                            <p class="font-light text-[11px]">{{ $comment['created_at'] }}</p>
+                    @foreach($serialNumber['comments'] as $i => $comment)
+                        <div>
+                            <h3 class="font-semibold text-gray-800 flex flex-col text-sm ml-0.5 mb-[3px] w-full">{{$comment['user'] . " - " . $comment['role']}}</h3>
+                            <div class="comment-item">
+                                <!--text -->
+                                <p class="comment-box relative">{!! nl2br(e($comment['text'])) !!}
+                                    <x-heroicon-s-trash data-id="{{$comment['id']}}" class="delete-comment-btn absolute top-2 right-2 w-4 h-4 text-rose-400 hover-fx hover:text-rose-600"/>
+                                </p>
+                                <p class="font-light text-[11px] ml-0.5 mt-[3px]">{{ $comment['created_at']?->toDateTime()?->format('d-m-Y H:i:s') }}</p>
+                            </div>
                         </div>
                     @endforeach
                 @endif
             @endforeach
         </section>
     </div>
+
+    <x-popup.form key="delete-comment" heading="Are you sure to delete this comment?">
+        <x-slot:form>
+            <form action="{{route('product.comment.delete')}}" method="POST">
+                @csrf
+                <input type="text" name="product_id" value="{{$product->id}}" required readonly hidden>
+                <input type="text" name="serial_number" value="{{$selected_serial_number}}" required readonly hidden>
+                <input type="text" id="delete-comment-id" name="comment_id" required readonly hidden>
+                <button class="cancel-btn flex gap-2 items-center">Delete <x-heroicon-o-trash class="w-5"/></button>
+            </form>
+        </x-slot:form>
+    </x-popup.form>
+
+    <script type="text/javascript">
+        $(".delete-comment-btn").click(function(){
+            let commentId = $(this).data('id');
+            $('#delete-comment-id').val(commentId);
+            $('.popup-delete-comment').show();
+            showPopup(commentId);
+        });
+    </script>
 @stop

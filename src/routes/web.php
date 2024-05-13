@@ -9,10 +9,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('index');
 });
-//comment
+
 Route::post('/product/{product}/comments', [ProductController::class, 'addComment'])->name('product.comments.add');
-//Route::delete('/product/comment/delete/{comment_id}', [ProductController::class, 'deleteComment'])->name('product.comments.delete');
-//
+Route::post('/product/comment/delete', [ProductController::class, 'deleteComment'])->name('product.comment.delete');
 // PRODUCT MANAGEMENT FLOW
 Route::get('/manage-product', [ProductController::class, 'addProductView'])->name('manage.products');
 Route::post('/store-product', [ProductController::class, 'store'])->name('product.store');
@@ -50,5 +49,3 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
-
-Route::get('/test', [\App\Http\Controllers\GenerateController::class, 'createWarehouses']);

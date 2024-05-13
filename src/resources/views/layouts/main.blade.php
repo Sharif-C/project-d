@@ -20,7 +20,7 @@
     </head>
     <body class="font-sans antialiased flex">
         <x-navigation/>
-        <main class="m-0 bg-gray-200 py-3 w-full h-[100vh]">
+        <main class="m-0 bg-gray-200 py-3 w-full h-[100vh] overflow-y-auto">
             <!-- Page Content -->
             @yield('content')
         </main>
