@@ -68,6 +68,10 @@ class ProductController extends Controller
     {
         return view('product.edit-product', compact('product'));
     }
+
+    /**
+     * @throws ValidationException
+     */
     public function editProduct(Request $request, Product $product)
     {
         $request->validate([
@@ -75,7 +79,10 @@ class ProductController extends Controller
             'description' => 'nullable|string|max:255',
         ]);
 
-//        TODO: validate product name on update
+        $found = Product::where("name",$request->name)->whereNot("_id",$product->_id)->exists();
+        if ($found){
+            throw ValidationException::withMessages(["errors"=> "Can not use this name!"]);
+        }
 
         $product->name = $request->input('name');
         $product->description = $request->input('description');
