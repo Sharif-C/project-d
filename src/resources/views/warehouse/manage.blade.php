@@ -62,7 +62,9 @@
                                        @click="toggleCheckbox($el, 2890.66)"/>
                             </td>
                             <td class="p-2">
-                                <div class="font-medium text-gray-800">{{$warehouse->name}}</div>
+                                <a href="{{ route('warehouse.edit.view', $warehouse->id) }}">
+                                    <div class="font-medium text-gray-800 trademark-color-hover">{{$warehouse->name}}</div>
+                                </a>
                             </td>
                             <td class="p-2">
                                 <div class="font-medium text-gray-800">
