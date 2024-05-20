@@ -1,6 +1,7 @@
 @extends('layouts.main')
 @section('content')
 
+{{--    TODO: remove--}}
     <x-popup-modal/>
 
     <section class="flex flex-col justify-start gap-4 p-2 max-w-5xl m-auto">
@@ -74,6 +75,7 @@
         </div>
     </section>
 
+    {{--    TODO: Verplaatsen naar de nieuwe popup-form--}}
     <!-- Single form for deleting warehouses -->
     <form id="deleteForm" action="{{ route('van.delete') }}" method="POST" hidden>
         @csrf
@@ -82,7 +84,7 @@
 
     <script type="text/javascript">
         function deleteVan(id) {
-            $(".popup-overlay").toggle();
+            $(".popup-overlay").toggle(); //TODO: remove and change to new popup name (popup-{key})
             $("#van_id").val(id);
         }
     </script>
