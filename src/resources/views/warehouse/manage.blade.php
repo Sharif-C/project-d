@@ -48,7 +48,7 @@
                             <div class="text-left font-semibold">Address</div>
                         </th>
                         <th class="p-2">
-                            <div class="text-center font-semibold">Delete</div>
+                            <div class="text-center font-semibold">Actions</div>
                         </th>
                     </tr>
                     </thead>
@@ -72,7 +72,11 @@
                                 </div>
                             </td>
                             <td class="p-2">
-                                <div class="flex justify-center">
+                                <div class="flex justify-center gap-2">
+                                    <a href="{{ route('warehouse.edit.view', $warehouse->id) }}">
+                                        <x-heroicon-o-pencil-square class="w-6 h-6 text-gray-500 hover:text-indigo-500 duration-200 ease-in-out cursor-pointer"/>
+                                    </a>
+
                                     <!-- Delete button with data-id attribute -->
                                     <button class="delete-button" onclick="deleteWarehouse('{{$warehouse->id}}')">
                                         <x-heroicon-o-trash class="w-6 h-6 text-gray-500 hover:text-rose-500 duration-200 ease-in-out"/>
