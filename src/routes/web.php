@@ -36,6 +36,12 @@ Route::post('/product/serial_number/delete', [ProductController::class, 'deleteS
 Route::get('/manage-warehouse', [WarehouseController::class, 'manageWarehouseView'])->name('manage.warehouses');
 Route::post('/warehouse/store', [WarehouseController::class, 'storeWarehouse'])->name('warehouse.store');
 Route::post('/warehouse/delete', [WarehouseController::class, 'deleteWareHouse'])->name('warehouse.delete');
+Route::get('/warehouse/edit/{warehouse}', [WarehouseController::class, 'updateWarehouseView'])
+    ->name('warehouse.edit.view')
+    ->missing(function (){return redirect()->route('manage.warehouses');});
+Route::post("warehouse/update", [WarehouseController::class, "updateWarehouseAction"])
+    ->name("warehouse.update.action");
+
 
 
 // GENERATED ROUTES
