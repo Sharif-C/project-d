@@ -30,8 +30,6 @@ class VanController extends Controller
 
         if(!$van) {
             throw ValidationException::withMessages(['errors' => 'ID not found.']);
-
-
         }
         // TODO -> delete related serialnumbers
         $van->delete();
@@ -43,4 +41,31 @@ class VanController extends Controller
         $vans = Van::get();
         return view('van.manage', compact('vans'));
     }
+
+    public function updateVanView(Request $request, Van $van)
+    {
+        return view("van.update", compact("van"));
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function updateVanAction(Request $request)
+    {
+        $request ->validate([
+            "van_id" => "required|exists:vans,_id",
+            "license_plate" => "required|string"
+        ]);
+
+        $found = Van::where("licenceplate", $request->license_plate)->whereNot("_id",$request->van_id)->exists();
+
+        throw_if($found, ValidationException::withMessages(["errors"=> "Can not use this license plate!"]));
+
+        $updateVan = Van::find($request->van_id);
+        $updateVan->licenceplate = strtoupper($request->license_plate);
+        $updateVan->save();
+
+        return redirect()->back()->with('success', 'Van updated!');
+    }
 }
+

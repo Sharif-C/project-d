@@ -37,6 +37,9 @@
                         <th class="p-2">
                             <div class="text-left font-semibold">Licence-plate</div>
                         </th>
+                        <th class="p-2">
+                            <div class="text-center font-semibold">Actions</div>
+                        </th>
                     </tr>
                     </thead>
 
@@ -49,7 +52,11 @@
                                        @click="toggleCheckbox($el, 2890.66)"/>
                             </td>
                             <td class="p-2">
-                                <div class="font-medium text-gray-800">{{$van->licenceplate}}</div>
+                                <a href="{{ route('van.edit.view', $van->id) }}">
+                                    <div class="font-medium text-gray-800 trademark-color-hover">
+                                        {{ $van->licenceplate }}
+                                    </div>
+                                </a>
                             </td>
                             <td class="p-2">
                                 <div class="flex justify-center">

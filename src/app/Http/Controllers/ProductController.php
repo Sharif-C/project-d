@@ -105,12 +105,21 @@ class ProductController extends Controller
     {
         return view('product.edit-product', compact('product'));
     }
+
+    /**
+     * @throws ValidationException
+     */
     public function editProduct(Request $request, Product $product)
     {
         $request->validate([
-            'name' => 'required|string|unique:products,name|max:255',
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:255',
         ]);
+
+        $found = Product::where("name",$request->name)->whereNot("_id",$product->_id)->exists();
+        if ($found){
+            throw ValidationException::withMessages(["errors"=> "Can not use this name!"]);
+        }
 
         $product->name = $request->input('name');
         $product->description = $request->input('description');
