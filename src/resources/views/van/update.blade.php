@@ -55,7 +55,7 @@
                             <div class="text-left font-semibold">Product</div>
                         </th>
                         <th class="p-2">
-                            <div class="text-left font-semibold">Warehouse</div>
+                            <div class="text-left font-semibold">Origin Warehouse</div>
                         </th>
                         <th class="p-2">
                             <div class="text-center font-semibold">Actions</div>
@@ -89,11 +89,11 @@
                                     <td class="p-2">
                                         <div class="flex justify-center gap-2">
                                             <a href="{{route('view.serial-number', ['product_id' => $relatedProduct->_id, 'serial_number' => $serialNumber['serial_number']])}}">
-                                                <x-heroicon-o-pencil-square class="w-6 h-6 text-gray-500 hover:text-indigo-500 duration-200 ease-in-out"/>
+                                                <x-heroicon-o-eye class="w-6 h-6 text-gray-500 hover:text-indigo-500 duration-200 ease-in-out"/>
                                             </a>
                                             <!-- Delete button with data-id attribute -->
                                             <button class="delete-button" onclick="showPopup('{{$relatedProduct->_id}}', '{{$serialNumber['serial_number']}}')">
-                                                <x-heroicon-o-trash class="w-6 h-6 text-gray-500 hover:text-rose-500 duration-200 ease-in-out"/>
+                                                <x-heroicon-o-arrow-right-start-on-rectangle class="w-6 h-6 text-gray-500 hover:text-rose-500 duration-200 ease-in-out"/>
                                             </button>
                                         </div>
                                     </td>
@@ -133,6 +133,9 @@
                         <th class="p-2">
                             <div class="text-left font-semibold">Warehouse</div>
                         </th>
+                        <th class="p-2">
+                            <div class="text-left font-semibold">Located in van</div>
+                        </th>
                     </tr>
                     </thead>
 
@@ -140,6 +143,11 @@
                     <!-- record 1 -->
                     @foreach($products as $product)
                         @foreach($product->serial_numbers as $serialNumber)
+
+                         @if(!empty($serialNumber['van_id'] ?? null) && $serialNumber['van_id'] === $van->_id )
+                             @continue
+                         @endif
+
                         <tr>
                             <td class="p-2">
                                 <input
@@ -173,6 +181,11 @@
                                 <div class="font-medium text-gray-800">
                                     {{$product->getWarehouseName($serialNumber['warehouse_id'])}}
                                 </div>
+                            </td>
+                            <td class="p-2">
+                                @if(!empty($serialNumber['van_id'] ?? null))
+                                    <div class="font-medium text-gray-800">{{$product->getVanLicensePlate($serialNumber['van_id'])}}</div>
+                                @endif
                             </td>
                         </tr>
                         @endforeach

@@ -61,6 +61,13 @@ class Product extends Model
         }
     }
 
+    public function getVanLicensePlate(string $van_id){
+        $van = Van::find($van_id);
+        if(!empty($van)){
+            return $van->licenceplate;
+        }
+    }
+
     public function warehouse(): Warehouse|null
     {
         $warehouse_id = $this?->serial_numbers[0]['warehouse_id'] ?? null;

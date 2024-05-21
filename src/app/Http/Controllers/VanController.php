@@ -45,7 +45,25 @@ class VanController extends Controller
 
     public function updateVanView(Request $request, Van $van)
     {
-        $relatedProducts = Product::where('serial_numbers.van_id', $van->_id)->get();
+        $vanId = $van->_id;
+        $relatedProducts = Product::where('serial_numbers.van_id', $vanId)
+            ->project([
+                '_id' => 1,
+                'created_at' => 1,
+                'updated_at' => 1,
+                'name' => 1,
+                'description' => 1,
+                'serial_numbers' => [
+                    '$filter' => [
+                        'input' => '$serial_numbers',
+                        'as' => 'serial',
+                        'cond' => ['$eq' => ['$$serial.van_id', $vanId]]
+                    ]
+                ]
+            ])
+            ->get();
+
+
         $products = Product::whereNot('serial_numbers', null)->get()->take(100);
         return view("van.update", compact("van", "relatedProducts", "products"));
     }
@@ -71,29 +89,47 @@ class VanController extends Controller
         return redirect()->back()->with('success', 'Van updated!');
     }
 
-    public function allocatedSerialnumbersToVan(Request $request)
+    /**
+     * @throws ValidationException
+     */
+    public function allocateProductsToVanTest(Request $request, Van $van)
     {
-        $request ->validate([
-            "van_id" => "required|exists:vans,_id",
-            "product_id" => "required|exists:products,_id",
-            "serial_number"=> "required|exists:products.serial_numbers.serial_number",
+        $request->validate([
+            "selection" => "required|array",
+            "selection.product_id" => "required|array",
+            "selection.serial_number" => "required|array",
+            "selection.product_id.*" => "required|exists:products,_id",
+            "selection.serial_number.*" => "required|exists:products,serial_numbers.serial_number",
         ]);
-        $addProduct = Product::where("product_id", $request->_id)->where('serial_number', $request->serial_numbers)->exists();
 
-        if(!$addProduct){
-            throw ValidationException::withMessages(['errors' => 'Combination not found!']);
+        $selection = $request->input('selection');
+        $product_ids = $selection['product_id'];
+        $serial_numbers = $selection['serial_number'];
+        $iterations = count($product_ids);
+
+        for ($i=0; $i<$iterations; $i++){
+            $product_id = $product_ids[$i];
+            $serial_number = $serial_numbers[$i];
+
+            $found = Product::where("_id", $product_id)->where('serial_numbers.serial_number', $serial_number)->exists();
+
+            if(!$found){
+                throw ValidationException::withMessages(['errors' => 'Combination not found!']);
+            }
         }
-        else{
-            Product::where('product_id', $request->_id)
-                ->where('serial_numbers.serial_number', $request->serial_number)
+
+
+        for ($i=0; $i<$iterations; $i++){
+            $product_id = $product_ids[$i];
+            $serial_number = $serial_numbers[$i];
+            Product::where('_id', $product_id)
+                ->where('serial_numbers.serial_number', $serial_number)
                 ->update([
-                    'serial_numbers.$.van_id' => $request->van_id
+                    'serial_numbers.$.van_id' => $van->_id
                 ]);
         }
-    }
 
-    public function allocateProductsToVanTest(Request $r, Van $van){
-        return $r;
+        return redirect()->back()->with('success', 'Products added to van.');
     }
 }
 
