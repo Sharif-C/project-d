@@ -45,7 +45,9 @@ class VanController extends Controller
 
     public function updateVanView(Request $request, Van $van)
     {
-        return view("van.update", compact("van"));
+        $relatedProducts = Product::where('serial_numbers.van_id', $van->_id)->get();
+        $products = Product::whereNot('serial_numbers', null)->get()->take(100);
+        return view("van.update", compact("van", "relatedProducts", "products"));
     }
 
     /**
@@ -68,6 +70,7 @@ class VanController extends Controller
 
         return redirect()->back()->with('success', 'Van updated!');
     }
+
     public function allocatedSerialnumbersToVan(Request $request)
     {
         $request ->validate([
@@ -87,6 +90,10 @@ class VanController extends Controller
                     'serial_numbers.$.van_id' => $request->van_id
                 ]);
         }
+    }
+
+    public function allocateProductsToVanTest(Request $r, Van $van){
+        return $r;
     }
 }
 
