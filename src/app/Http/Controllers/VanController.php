@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\Van;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -66,6 +67,26 @@ class VanController extends Controller
         $updateVan->save();
 
         return redirect()->back()->with('success', 'Van updated!');
+    }
+    public function allocatedSerialnumbersToVan(Request $request)
+    {
+        $request ->validate([
+            "van_id" => "required|exists:vans,_id",
+            "product_id" => "required|exists:products,_id",
+            "serial_number"=> "required|exists:products.serial_numbers.serial_number",
+        ]);
+        $addProduct = Product::where("product_id", $request->_id)->where('serial_number', $request->serial_numbers)->exists();
+
+        if(!$addProduct){
+            throw ValidationException::withMessages(['errors' => 'Combination not found!']);
+        }
+        else{
+            Product::where('product_id', $request->_id)
+                ->where('serial_numbers.serial_number', $request->serial_number)
+                ->update([
+                    'serial_numbers.$.van_id' => $request->van_id
+                ]);
+        }
     }
 }
 
