@@ -1,7 +1,20 @@
 @extends('layouts.main')
 @section('content')
 
-    <x-popup-modal/>
+{{--    Form for deletion--}}
+    <x-popup.form key="delete">
+        <x-slot:heading>
+            Are you certain you want to delete this van?
+        </x-slot:heading>
+
+        <x-slot:form>
+            <form id="deleteForm" action="{{ route('van.delete') }}" method="POST">
+                @csrf
+                <input type="text" name="van_id" id="van_id" readonly required hidden>
+                <button class="cancel-btn">Delete</button>
+            </form>
+        </x-slot:form>
+    </x-popup.form>
 
     <section class="flex flex-col justify-start gap-4 p-2 max-w-5xl m-auto">
 
@@ -74,17 +87,12 @@
         </div>
     </section>
 
-    <!-- Single form for deleting warehouses -->
-    <form id="deleteForm" action="{{ route('van.delete') }}" method="POST" hidden>
-        @csrf
-        <input type="text" name="van_id" id="van_id">
-    </form>
 
+{{--    javascript Function DELETE button--}}
     <script type="text/javascript">
         function deleteVan(id) {
-            $(".popup-overlay").toggle();
+            $('.popup-delete').show();
             $("#van_id").val(id);
         }
     </script>
-
 @stop
