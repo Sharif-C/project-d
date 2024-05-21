@@ -35,3 +35,8 @@ docker compose exec php php artisan view:cache
 ```shell
 docker compose exec php php artisan view:clear
 ```
+
+## Migration refresh
+```shell
+docker compose exec php php artisan migrate:fresh
+```

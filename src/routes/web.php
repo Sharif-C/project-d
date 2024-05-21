@@ -42,6 +42,9 @@ Route::get('/warehouse/edit/{warehouse}', [WarehouseController::class, 'updateWa
 Route::post("warehouse/update", [WarehouseController::class, "updateWarehouseAction"])
     ->name("warehouse.update.action");
 
+Route::post("van/allocate/products/{van}", [VanController::class, "allocateProductsToVanTest"])
+    ->name("van.allocate.products")
+    ->missing(function (){return redirect()->back();});
 
 
 // GENERATED ROUTES

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\Van;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -44,7 +45,9 @@ class VanController extends Controller
 
     public function updateVanView(Request $request, Van $van)
     {
-        return view("van.update", compact("van"));
+        $relatedProducts = Product::where('serial_numbers.van_id', $van->_id)->get();
+        $products = Product::whereNot('serial_numbers', null)->get()->take(100);
+        return view("van.update", compact("van", "relatedProducts", "products"));
     }
 
     /**
@@ -66,6 +69,10 @@ class VanController extends Controller
         $updateVan->save();
 
         return redirect()->back()->with('success', 'Van updated!');
+    }
+
+    public function allocateProductsToVanTest(Request $r, Van $van){
+        return $r;
     }
 }
 
