@@ -16,8 +16,6 @@
         </x-slot:form>
     </x-popup.form>
 
-
-
     <div class="m-auto bg-white p-4 w-fit rounded min-w-[80%]">
         <h1 class="text-2xl mb-2 text-center">Manage serial number</h1>
 
@@ -60,7 +58,7 @@
         <!-- Table -->
         <div class="mx-auto w-full rounded-sm border border-gray-200 bg-white shadow-lg">
             <header class="border-b border-gray-100 px-5 py-4">
-                <div class="font-semibold text-gray-800">Product serial numbers</div>
+                <div class="font-semibold text-emerald-800">Product serial numbers</div>
 
                 @if(session()->has('success_delete'))
                     <p class="p-2 text-emerald-500">{{session('success_delete')}}</p>
@@ -92,6 +90,11 @@
                         @foreach($products as $product)
                             @if(isset($product->serial_numbers))
                                 @foreach($product->serial_numbers as $serialNumber)
+
+                                    @if(isset($serialNumber['van_id']))
+                                        @continue
+                                    @endif
+
                                     <tr>
                                         <td class="p-2">
                                             <input type="checkbox" class="h-5 w-5" value="id-1" @click="toggleCheckbox($el, 2890.66)"/>
