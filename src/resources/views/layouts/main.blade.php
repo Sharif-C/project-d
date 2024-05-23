@@ -18,12 +18,11 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased">
-        <div class="h-[100vh] bg-gray-100 py-4">
+    <body class="font-sans antialiased flex">
+        <x-navigation/>
+        <main class="m-0 bg-gray-200 py-3 w-full h-[100vh] overflow-y-auto">
             <!-- Page Content -->
-            <main class="h-[100vh]">
-                @yield('content')
-            </main>
-        </div>
+            @yield('content')
+        </main>
     </body>
 </html>

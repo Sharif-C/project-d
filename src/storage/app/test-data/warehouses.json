@@ -1,0 +1,92 @@
+[
+    {
+        "name": "Green Valley Warehousing",
+        "address": "Veerweg",
+        "city": "Amsterdam",
+        "zip_code": "1011 AK",
+        "country": "Netherlands",
+        "street": "Veerweg",
+        "house_number": "12"
+    },
+    {
+        "name": "Netherlands Logistics Hub",
+        "address": "Industrieweg",
+        "city": "Rotterdam",
+        "zip_code": "3044 AS",
+        "country": "Netherlands",
+        "street": "Industrieweg",
+        "house_number": "36"
+    },
+    {
+        "name": "Tulip Transport Center",
+        "address": "Bloemenstraat",
+        "city": "Utrecht",
+        "zip_code": "3511 LC",
+        "country": "Netherlands",
+        "street": "Bloemenstraat",
+        "house_number": "9"
+    },
+    {
+        "name": "Windmill Warehousing Solutions",
+        "address": "Molenstraat",
+        "city": "Eindhoven",
+        "zip_code": "5612 CW",
+        "country": "Netherlands",
+        "street": "Molenstraat",
+        "house_number": "17"
+    },
+    {
+        "name": "Canal Cargo Depot",
+        "address": "Gracht",
+        "city": "Groningen",
+        "zip_code": "9711 PE",
+        "country": "Netherlands",
+        "street": "Gracht",
+        "house_number": "23"
+    },
+    {
+        "name": "Dutch Harbor Distribution Center",
+        "address": "Havenweg",
+        "city": "Den Haag",
+        "zip_code": "2597 AX",
+        "country": "Netherlands",
+        "street": "Havenweg",
+        "house_number": "8"
+    },
+    {
+        "name": "Orange Grove Logistics Park",
+        "address": "Oranjelaan",
+        "city": "Maastricht",
+        "zip_code": "6212 EG",
+        "country": "Netherlands",
+        "street": "Oranjelaan",
+        "house_number": "44"
+    },
+    {
+        "name": "Dutch Delta Distribution Center",
+        "address": "Deltaweg",
+        "city": "Nijmegen",
+        "zip_code": "6523 LL",
+        "country": "Netherlands",
+        "street": "Deltaweg",
+        "house_number": "5"
+    },
+    {
+        "name": "Tulip Logistics Park",
+        "address": "Tulpenstraat",
+        "city": "Haarlem",
+        "zip_code": "2011 KA",
+        "country": "Netherlands",
+        "street": "Tulpenstraat",
+        "house_number": "20"
+    },
+    {
+        "name": "Windmill Distribution Center",
+        "address": "Molendijk",
+        "city": "Arnhem",
+        "zip_code": "6811 CM",
+        "country": "Netherlands",
+        "street": "Molendijk",
+        "house_number": "3"
+    }
+]

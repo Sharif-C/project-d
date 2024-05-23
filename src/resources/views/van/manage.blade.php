@@ -1,32 +1,43 @@
 @extends('layouts.main')
 @section('content')
 
+{{--    Form for deletion--}}
+    <x-popup.form key="delete">
+        <x-slot:heading>
+            Are you certain you want to delete this van?
+        </x-slot:heading>
+
+        <x-slot:form>
+            <form id="deleteForm" action="{{ route('van.delete') }}" method="POST">
+                @csrf
+                <input type="text" name="van_id" id="van_id" readonly required hidden>
+                <button class="cancel-btn">Delete</button>
+            </form>
+        </x-slot:form>
+    </x-popup.form>
+
     <section class="flex flex-col justify-start gap-4 p-2 max-w-5xl m-auto">
 
-        <form action="{{route("product.store")}}" method="POST"
-              class="bg-white p-6 rounded flex flex-col gap-2 w-fit shadow-lg">
-            <h2 class="font-semibold text-gray-800">Add product</h2>
+        <form action="{{route("van.store")}}" method="POST" class="bg-white p-6 rounded flex flex-col gap-2 w-fit shadow-lg">
+            <h2 class="font-semibold text-gray-800">Add van</h2>
+
             @csrf
-            <input type="text" name="name" placeholder="Name" class="default-input" required>
-            <input class="default-input" type="text" name="description" placeholder="Description">
+            <input class="default-input" type="text" name="licenceplate" placeholder="Licence plate" required>
             <button class="default-button w-fit">Save</button>
 
-            @if(session()->has('success'))
-                <p class="p-2 text-emeralds-500">{{session('success')}}</p>
+            @if(session()->has('success_van'))
+                <p class="p-2 text-emerald-500">{{session('success_van')}}</p>
             @endif
-
-            @foreach($errors->all() as $e)
-                <p class="p-2 text-rose-500">{{$e}}</p>
-            @endforeach
         </form>
 
 
         <!-- Table -->
         <div class="mx-auto w-full rounded-sm border border-gray-200 bg-white shadow-lg">
             <header class="border-b border-gray-100 px-5 py-4">
-                <div class="font-semibold text-gray-800">Products</div>
-
-                @if(session()->has('success_delete'))
+                <div class="font-semibold text-gray-800">Vans</div>
+                @foreach($errors->all() as $e)
+                    <p class="p-2 text-rose-500">{{$e}}</p>
+                @endforeach                @if(session()->has('success_delete'))
                     <p class="p-2 text-emerald-500">{{session('success_delete')}}</p>
                 @endif
             </header>
@@ -37,43 +48,36 @@
                     <tr class="text-[#88327D]">
                         <th></th>
                         <th class="p-2">
-                            <div class="text-left font-semibold">Name</div>
+                            <div class="text-left font-semibold">Licence-plate</div>
                         </th>
                         <th class="p-2">
-                            <div class="text-left font-semibold">Description</div>
-                        </th>
-                        <th class="p-2">
-                            <div class="text-center font-semibold">Action</div>
+                            <div class="text-center font-semibold">Actions</div>
                         </th>
                     </tr>
                     </thead>
 
                     <tbody class="divide-y divide-gray-100 text-sm">
                     <!-- record 1 -->
-                    @foreach($products as $product)
+                    @foreach($vans as $van)
                         <tr>
                             <td class="p-2">
-                                <input type="checkbox" class="h-5 w-5" value="id-1"/>
+                                <input type="checkbox" class="h-5 w-5" value="id-1" @click="toggleCheckbox($el, 2890.66)"/>
                             </td>
                             <td class="p-2">
-                                <a href="{{ route('product.edit', $product->id) }}">
+                                <a href="{{ route('van.edit.view', $van->id) }}">
                                     <div class="font-medium text-gray-800 trademark-color-hover">
-                                        {{ $product->name }}
+                                        {{ $van->licenceplate }}
                                     </div>
                                 </a>
                             </td>
                             <td class="p-2">
-                                <div class="font-medium text-gray-800">
-                                    {{$product->description}}
-                                </div>
-                            </td>
-                            <td class="p-2">
                                 <div class="flex justify-center gap-2">
-                                    <a href="{{ route('product.edit', $product->id) }}">
+                                    <a href="{{ route('van.edit.view', $van->id) }}">
                                         <x-heroicon-o-pencil-square class="w-6 h-6 text-gray-500 hover:text-indigo-500 duration-200 ease-in-out cursor-pointer"/>
                                     </a>
+
                                     <!-- Delete button with data-id attribute -->
-                                    <button class="delete-button" onclick="deleteProduct('{{$product->id}}')">
+                                    <button class="delete-button" onclick="deleteVan('{{$van->id}}')">
                                         <x-heroicon-o-trash class="w-6 h-6 text-gray-500 hover:text-rose-500 duration-200 ease-in-out"/>
                                     </button>
                                 </div>
@@ -84,21 +88,14 @@
                 </table>
             </div>
         </div>
-
     </section>
 
-    <!-- Single form for deleting Product -->
-    <form id="deleteForm" action="{{ route('product.delete') }}" method="POST" hidden>
-       @csrf
-        <input type="text" name="product_id" id="product_id">
-    </form>
 
+{{--    javascript Function DELETE button--}}
     <script type="text/javascript">
-        function deleteProduct(id) {
-            let productId = document.getElementById('product_id');
-            productId.setAttribute('value', id);
-            document.getElementById("deleteForm").submit();
+        function deleteVan(id) {
+            $('.popup-delete').show();
+            $("#van_id").val(id);
         }
     </script>
-
 @stop
