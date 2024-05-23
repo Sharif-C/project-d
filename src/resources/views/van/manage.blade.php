@@ -22,8 +22,8 @@
             <h2 class="font-semibold text-gray-800">Add van</h2>
 
             @csrf
-            <input class="rounded" type="text" name="licenceplate" placeholder="Licence plate" required>
-            <button class="default-button">Save</button>
+            <input class="default-input" type="text" name="licenceplate" placeholder="Licence plate" required>
+            <button class="default-button w-fit">Save</button>
 
             @if(session()->has('success_van'))
                 <p class="p-2 text-emerald-500">{{session('success_van')}}</p>
@@ -61,8 +61,7 @@
                     @foreach($vans as $van)
                         <tr>
                             <td class="p-2">
-                                <input type="checkbox" class="h-5 w-5" value="id-1"
-                                       @click="toggleCheckbox($el, 2890.66)"/>
+                                <input type="checkbox" class="h-5 w-5" value="id-1" @click="toggleCheckbox($el, 2890.66)"/>
                             </td>
                             <td class="p-2">
                                 <a href="{{ route('van.edit.view', $van->id) }}">
@@ -72,7 +71,11 @@
                                 </a>
                             </td>
                             <td class="p-2">
-                                <div class="flex justify-center">
+                                <div class="flex justify-center gap-2">
+                                    <a href="{{ route('van.edit.view', $van->id) }}">
+                                        <x-heroicon-o-pencil-square class="w-6 h-6 text-gray-500 hover:text-indigo-500 duration-200 ease-in-out cursor-pointer"/>
+                                    </a>
+
                                     <!-- Delete button with data-id attribute -->
                                     <button class="delete-button" onclick="deleteVan('{{$van->id}}')">
                                         <x-heroicon-o-trash class="w-6 h-6 text-gray-500 hover:text-rose-500 duration-200 ease-in-out"/>
