@@ -6,7 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use MongoDB\Laravel\Eloquent\Builder;
 use MongoDB\Laravel\Eloquent\Model;
 
-
+/**
+ * @mixin \Eloquent
+ *
+ **/
 
 class Van extends Model
 {
@@ -14,6 +17,6 @@ class Van extends Model
 
     protected $connection = 'mongodb';
     protected $collection = 'vans';
-    protected $fillable = ['licenceplate', 'serialnumber-list'];
+    protected $fillable = ['licenceplate'];
 
 }

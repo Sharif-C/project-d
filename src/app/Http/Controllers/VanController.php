@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Van;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
@@ -91,6 +92,7 @@ class VanController extends Controller
 
     /**
      * @throws ValidationException
+     * @throws \Throwable
      */
     public function allocateProductsToVanTest(Request $request, Van $van)
     {
@@ -118,18 +120,68 @@ class VanController extends Controller
             }
         }
 
-
         for ($i=0; $i<$iterations; $i++){
             $product_id = $product_ids[$i];
             $serial_number = $serial_numbers[$i];
-            Product::where('_id', $product_id)
-                ->where('serial_numbers.serial_number', $serial_number)
-                ->update([
-                    'serial_numbers.$.van_id' => $van->_id
-                ]);
+
+            $stored = $this->allocateToVan(product_id: $product_id, serial_number: $serial_number, van_id: $van->_id);
+            throw_if(!$stored, ValidationException::withMessages(['errors' => 'Could not move serial-number to van.']));
         }
 
         return redirect()->back()->with('success', 'Products added to van.');
     }
+
+    /**
+     * @throws ValidationException
+     */
+    private function allocateToVan(string $product_id, string $serial_number, string $van_id) : bool{
+        $saved = Product::where('_id', $product_id)
+            ->where('serial_numbers.serial_number', $serial_number)
+            ->update([
+                'serial_numbers.$.van_id' => $van_id
+            ]);
+
+        return !empty($saved);
+    }
+
+    // API POST ENDPOINT
+    public function moveProductToVan(Request $request){
+        try{
+            $request->validate([
+                'product_id' => "required|exists:products,_id",
+                'serial_number' => "required|exists:products,serial_numbers.serial_number",
+                "van_id" => "required|exists:vans,_id",
+            ]);
+        }
+        catch(ValidationException $ve){
+            return response()->json($ve->validator->errors(), 422); // 422: Unprocessable Entity
+        }
+
+        try{
+            $product_id = $request->product_id;
+            $serial_number = $request->serial_number;
+            $van_id = $request->van_id;
+
+            $product = Product::find($product_id);
+            $van = Van::find($van_id);
+
+            $stored = $this->allocateToVan(product_id: $product_id, serial_number: $serial_number, van_id: $van_id);
+            if(empty($stored)){
+                return response()->json("Could not move serial-number to van.", 422); // 422: Unprocessable Entity
+            }
+
+            return response()->json([
+                "success" => "Moved {$product->name} with serial-number $serial_number to {$van->licenceplate}"
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                "status" => "error",
+                "message" => "An unexpected error occurred. Please try again later.",
+                "code" => 500,
+            ], 500);
+        }
+    }
+
+
 }
 
