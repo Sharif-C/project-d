@@ -40,3 +40,13 @@ docker compose exec php php artisan view:clear
 ```shell
 docker compose exec php php artisan migrate:fresh
 ```
+
+## install node packages
+```shell
+docker compose run --rm node npm install
+```
+
+## install composer packages
+```shell 
+docker compose run --rm composer install
+```
