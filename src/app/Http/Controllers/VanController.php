@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Van;
+use App\Models\Warehouse;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -63,10 +64,11 @@ class VanController extends Controller
                 ]
             ])
             ->get();
+        $warehouses = Warehouse::all();
 
 
         $products = Product::whereNot('serial_numbers', null)->get()->take(100);
-        return view("van.update", compact("van", "relatedProducts", "products"));
+        return view("van.update", compact("van", "relatedProducts", "products", "warehouses"));
     }
 
     /**
@@ -88,6 +90,34 @@ class VanController extends Controller
         $updateVan->save();
 
         return redirect()->back()->with('success', 'Van updated!');
+    }
+
+    public function moveProductToWarehouse(Request $request){
+        $request->validateWithBag('moveProductToWarehouse',[
+            'warehouse_id' => "required|string|exists:warehouses,_id",
+            'serial_number' => "required|string|exists:products,serial_numbers.serial_number",
+            'product_id' => "required|string|exists:products,_id",
+        ]);
+
+
+        $saved = $this->detachProductFromVan($request->product_id, $request->serial_number, $request->warehouse_id);
+        throw_if(empty($saved), ValidationException::withMessages(["moveProductToWarehouse" => "Failed to move product to warehouse."])->errorBag('moveProductToWarehouse'));
+
+
+        return redirect()->back()->with('success', "Moved product to warehouse.");
+    }
+
+    private function detachProductFromVan(string $product_id, string $serial_number, string $warehouse_id) : bool|int{
+        return Product::where('_id', $product_id)
+            ->where('serial_numbers.serial_number', $serial_number)
+            ->update([
+                '$unset' => [
+                    'serial_numbers.$.van_id' => 1
+                ],
+                '$set' => [
+                    'serial_numbers.$.warehouse_id' => $warehouse_id
+                ]
+            ]);
     }
 
     /**
