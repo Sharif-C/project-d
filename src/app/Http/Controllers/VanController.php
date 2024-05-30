@@ -195,6 +195,16 @@ class VanController extends Controller
             $product = Product::find($product_id);
             $van = Van::find($van_id);
 
+            // Check if the product is already in the specified van
+            $productInVan = Product::where('_id', $product_id)
+                ->where('serial_numbers.serial_number', $serial_number)
+                ->where('serial_numbers.van_id', $van_id)
+                ->exists();
+
+            if($productInVan){
+                return response()->json("Product with serial-number $serial_number is already in van {$van->licenceplate}.", 422); // 422: Unprocessable Entity
+            }
+
             $stored = $this->allocateToVan(product_id: $product_id, serial_number: $serial_number, van_id: $van_id);
             if(empty($stored)){
                 return response()->json("Could not move serial-number to van.", 422); // 422: Unprocessable Entity
@@ -211,7 +221,5 @@ class VanController extends Controller
             ], 500);
         }
     }
-
-
 }
 
