@@ -7,4 +7,5 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //})->middleware('auth:sanctum');
 
-Route::post('/van/product/move', [VanController::class, 'moveProductToVan']);
+Route::post('/van/product/move', [VanController::class, 'moveProductToVanAPI']);
+Route::post('/warehouse/product/move', [VanController::class, 'moveProductToWarehouseAPI']);
