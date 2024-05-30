@@ -178,9 +178,9 @@ class VanController extends Controller
     public function moveProductToVan(Request $request){
         try{
             $request->validate([
-                'product_id' => "required|exists:products,_id",
-                'serial_number' => "required|exists:products,serial_numbers.serial_number",
-                "van_id" => "required|exists:vans,_id",
+                'product_id' => "required|string|exists:products,_id",
+                'serial_number' => "required|string|exists:products,serial_numbers.serial_number",
+                "van_id" => "required|string|exists:vans,_id",
             ]);
         }
         catch(ValidationException $ve){
