@@ -224,12 +224,15 @@ class ProductController extends Controller
             throw ValidationException::withMessages(['errors' => "Failed to update serial number."]);
         }
 
+        //TODO:  Loggen van warehouse if old_warehouse_id != new_warehouse_id
+
         return to_route('view.serial-number', ['product_id' => $product_id, 'serial_number' => $new_serial_number])->with('success', 'Serial number updated!');
     }
 
     /**
      * @throws ValidationException
      */
+
     private function validateSerialNumber(string $product_id, string $serial_number, bool $mustExist = false){
         $hasSerialNumber = Product::where('_id', $product_id)->where('serial_numbers.serial_number', $serial_number)->exists();
 

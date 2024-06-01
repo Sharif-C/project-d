@@ -108,7 +108,17 @@ class VanController extends Controller
     }
 
     private function detachProductFromVan(string $product_id, string $serial_number, string $warehouse_id) : bool|int{
-        return Product::where('_id', $product_id)
+
+        $product = Product::where('_id', $product_id)
+        ->where('serial_numbers.serial_number', $serial_number)
+        ->project([
+            'name' => 1,
+            'serial_numbers.$' => 1,
+            ])
+        ->first();
+        $old_van_id = $product->serial_numbers[0]['van_id'];
+
+        $updatedRows = Product::where('_id', $product_id)
             ->where('serial_numbers.serial_number', $serial_number)
             ->update([
                 '$unset' => [
@@ -118,6 +128,20 @@ class VanController extends Controller
                     'serial_numbers.$.warehouse_id' => $warehouse_id
                 ]
             ]);
+
+        $saved = !empty($updatedRows);
+
+        if($saved){
+//            TODO: Logging
+            {
+                $warehouse = Warehouse::find($warehouse_id);
+                $old_van = Van::find($old_van_id);
+                $log = "$product->name with serial number $serial_number moved from $$old_van->licenceplate to $warehouse->name";
+                Product::historyLog($log,$serial_number,$product_id);
+            }
+        }
+
+        return $updatedRows;
     }
 
     /**
@@ -165,13 +189,57 @@ class VanController extends Controller
      * @throws ValidationException
      */
     private function allocateToVan(string $product_id, string $serial_number, string $van_id) : bool{
-        $saved = Product::where('_id', $product_id)
+
+        $vanid_present = false;
+        $old_van_id = null;
+
+        // Check if van_id is present
+        $product = Product::where('_id', $product_id)
+        ->where('serial_numbers.serial_number', $serial_number)
+        ->project(['serial_numbers.$' => 1])
+        ->first();
+        if ($product && !empty($product->serial_numbers[0]['van_id'])) {
+            $vanid_present = true;
+            $old_van_id = $product->serial_numbers[0]['van_id'];
+            }
+
+
+        $updatedRows = Product::where('_id', $product_id)
             ->where('serial_numbers.serial_number', $serial_number)
             ->update([
                 'serial_numbers.$.van_id' => $van_id
             ]);
 
-        return !empty($saved);
+        $saved = !empty($updatedRows);
+
+        if($saved){
+            $product = Product::where('_id', $product_id)
+                ->where('serial_numbers.serial_number', $serial_number)
+                ->project([
+                    'name' => 1,
+                    'serial_numbers.$' => 1 ,
+                ])
+                ->first();
+            $warehouseId = $product->serial_numbers[0]['warehouse_id'];
+            $van = Van::find($van_id);
+            $warehouse = Warehouse::find($warehouseId);
+
+            // logging
+            if($vanid_present)
+            {
+                $old_van = Van::find($old_van_id);
+                $log2 = "$product->name with serial number $serial_number moved from $old_van->licenceplate to $van->licenceplate";
+                Product::historyLog($log2,$serial_number,$product_id);
+            }
+            else
+            {
+                $log = "$product->name with serial number $serial_number moved from $warehouse->name to $van->licenceplate";
+                Product::historyLog($log,$serial_number,$product_id);
+            }
+
+        }
+
+        return $saved;
     }
 
     // API POST ENDPOINT
