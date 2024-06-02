@@ -9,3 +9,4 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/van/product/move', [VanController::class, 'moveProductToVanAPI']);
 Route::post('/warehouse/product/move', [VanController::class, 'moveProductToWarehouseAPI']);
+Route::post('/van/product/van/move', [VanController::class, 'moveProductFromVanToVanAPI']);

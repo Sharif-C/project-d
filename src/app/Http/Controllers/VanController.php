@@ -186,7 +186,6 @@ class VanController extends Controller
         catch(ValidationException $ve){
             return response()->json($ve->validator->errors(), 422); // 422: Unprocessable Entity
         }
-
         try{
             $product_id = $request->product_id;
             $serial_number = $request->serial_number;
@@ -274,5 +273,52 @@ class VanController extends Controller
             ], 500);
         }
     }
-}
 
+    public function moveProductFromVanToVanAPI(Request $request)
+    {
+        try{
+            $request->validate([
+                'product_id' => "required|string|exists:products,_id",
+                'serial_number' => "required|string|exists:products,serial_numbers.serial_number",
+                "van_id" => "required|string|exists:vans,_id",
+            ]);
+        }
+        catch(ValidationException $ve){
+            return response()->json($ve->validator->errors(), 422); // 422: Unprocessable Entity
+        }
+
+        try{
+            $product_id = $request->product_id;
+            $serial_number = $request->serial_number;
+            $van_id = $request->van_id;
+
+            $product = Product::find($product_id);
+            $van = Van::find($van_id);
+
+            // Check if the product is already in the specified van
+            $productInVan = Product::where('_id', $product_id)
+                ->where('serial_numbers.serial_number', $serial_number)
+                ->where('serial_numbers.van_id', $van_id)
+                ->exists();
+
+            if($productInVan){
+                return response()->json("{$product->name} with serial-number $serial_number is already in van {$van->licenceplate}.", 422); // 422: Unprocessable Entity
+            }
+
+            $stored = $this->allocateToVan(product_id: $product_id, serial_number: $serial_number, van_id: $van_id);
+            if(empty($stored)){
+                return response()->json("Could not move {$product->name} with serial-number $serial_number to van {$van->licenceplate}.", 422); // 422: Unprocessable Entity
+            }
+
+            return response()->json("Moved product {$product->name} with serialnumber $serial_number to van {$van->licenceplate}"
+            );
+        }
+        catch (Exception $e) {
+            return response()->json([
+                "status" => "error",
+                "message" => "An unexpected error occured. Please try again later",
+                "code" => 500,
+            ], 500);
+        }
+    }
+}
