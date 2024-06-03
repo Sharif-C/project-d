@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\VanController;
+use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/van/product/move', [VanController::class, 'moveProductToVan']);
+Route::post('/transfer/product', [ApiController::class, 'moveProductParser']);
