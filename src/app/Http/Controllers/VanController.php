@@ -333,13 +333,14 @@ class VanController extends Controller
                 ->first();
 
 
-//            if(empty($product->serial_numbers[0]['van_id'] ?? null)){
-//                return response()->json([
-//                    "status" => "error",
-//                    "message" => "Product with serial-number $serial_number is currently not in a van",
-//                    "code" => 422,
-//                ], 422);
-//            }
+            if(empty($product->serial_numbers[0]['van_id'] ?? null)){
+                return response()->json([
+                    "status" => "error",
+                    "message" => "In order to transfer serial number '{$serial_number}' to a warehouse, it must first be placed in a van.",
+                    "located_at_warehouse" => $product->serial_numbers[0]['warehouse_id'],
+                    "code" => 422,
+                ], 422);
+            }
 
             $stored = $this->detachProductFromVan(product_id: $product_id, serial_number: $serial_number, warehouse_id: $warehouse_id);
 

@@ -238,7 +238,7 @@ class ProductController extends Controller
         if ($old_warehouse_id != null && $old_warehouse_id != $warehouseId) {
             $warehouse = Warehouse::find($warehouseId);
             $old_warehouse = Warehouse::find($old_warehouse_id);
-            $log = "{$product->name} with serial number {$new_serial_number} moved from {$old_warehouse->name} to {$warehouse->name}";
+            $log = "{$product->name} with serial number {$new_serial_number} moved from {$old_warehouse->name} to {$warehouse->name} 📦➡️📦";
             Product::historyLog($log, $new_serial_number, $product_id);
         }
         return to_route('view.serial-number', ['product_id' => $product_id, 'serial_number' => $new_serial_number])->with('success', 'Serial number updated!');
