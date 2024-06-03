@@ -7,6 +7,10 @@ use MongoDB\Laravel\Eloquent\Builder;
 use MongoDB\Laravel\Eloquent\Model;
 use MongoDB\Laravel\Relations\HasMany;
 
+/**
+ * @mixin \Eloquent
+ **/
+
 class Warehouse extends Model
 {
     use HasFactory;

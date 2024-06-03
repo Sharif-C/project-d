@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Van;
+use App\Models\Warehouse;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
@@ -62,10 +64,11 @@ class VanController extends Controller
                 ]
             ])
             ->get();
+        $warehouses = Warehouse::all();
 
 
         $products = Product::whereNot('serial_numbers', null)->get()->take(100);
-        return view("van.update", compact("van", "relatedProducts", "products"));
+        return view("van.update", compact("van", "relatedProducts", "products", "warehouses"));
     }
 
     /**
@@ -89,10 +92,61 @@ class VanController extends Controller
         return redirect()->back()->with('success', 'Van updated!');
     }
 
+    public function moveProductToWarehouse(Request $request){
+        $request->validateWithBag('moveProductToWarehouse',[
+            'warehouse_id' => "required|string|exists:warehouses,_id",
+            'serial_number' => "required|string|exists:products,serial_numbers.serial_number",
+            'product_id' => "required|string|exists:products,_id",
+        ]);
+
+
+        $saved = $this->detachProductFromVan($request->product_id, $request->serial_number, $request->warehouse_id);
+        throw_if(empty($saved), ValidationException::withMessages(["moveProductToWarehouse" => "Failed to move product to warehouse."])->errorBag('moveProductToWarehouse'));
+
+
+        return redirect()->back()->with('success', "Moved product to warehouse.");
+    }
+
+    private function detachProductFromVan(string $product_id, string $serial_number, string $warehouse_id) : bool|int{
+
+        $product = Product::where('_id', $product_id)
+        ->where('serial_numbers.serial_number', $serial_number)
+        ->project([
+            'name' => 1,
+            'serial_numbers.$' => 1,
+            ])
+        ->first();
+        $old_van_id = $product->serial_numbers[0]['van_id'];
+
+        $updatedRows = Product::where('_id', $product_id)
+            ->where('serial_numbers.serial_number', $serial_number)
+            ->update([
+                '$unset' => [
+                    'serial_numbers.$.van_id' => 1
+                ],
+                '$set' => [
+                    'serial_numbers.$.warehouse_id' => $warehouse_id
+                ]
+            ]);
+
+        $saved = !empty($updatedRows);
+
+        if($saved)
+        {
+            $warehouse = Warehouse::select('name')->find($warehouse_id);
+            $old_van = Van::select('licenceplate')->find($old_van_id);
+            $log = "$product->name with serial number $serial_number moved from $old_van->licenceplate to $warehouse->name 🚚➡️📦";
+            Product::historyLog($log,$serial_number,$product_id);
+        }
+
+        return $updatedRows;
+    }
+
     /**
      * @throws ValidationException
+     * @throws \Throwable
      */
-    public function allocateProductsToVanTest(Request $request, Van $van)
+    public function allocateProductsToVan(Request $request, Van $van)
     {
         $request->validate([
             "selection" => "required|array",
@@ -112,24 +166,120 @@ class VanController extends Controller
             $serial_number = $serial_numbers[$i];
 
             $found = Product::where("_id", $product_id)->where('serial_numbers.serial_number', $serial_number)->exists();
-
-            if(!$found){
-                throw ValidationException::withMessages(['errors' => 'Combination not found!']);
-            }
+            throw_if(!$found, ValidationException::withMessages(['errors' => 'Combination not found!']));
         }
-
 
         for ($i=0; $i<$iterations; $i++){
             $product_id = $product_ids[$i];
             $serial_number = $serial_numbers[$i];
-            Product::where('_id', $product_id)
-                ->where('serial_numbers.serial_number', $serial_number)
-                ->update([
-                    'serial_numbers.$.van_id' => $van->_id
-                ]);
+
+            $stored = $this->allocateToVan(product_id: $product_id, serial_number: $serial_number, van_id: $van->_id);
+            throw_if(!$stored, ValidationException::withMessages(['errors' => 'Could not move serial-number to van.']));
         }
 
         return redirect()->back()->with('success', 'Products added to van.');
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    private function allocateToVan(string $product_id, string $serial_number, string $van_id) : bool{
+
+        // Check if van_id is present
+        $product = Product::where('_id', $product_id)
+        ->where('serial_numbers.serial_number', $serial_number)
+        ->project(['serial_numbers.$' => 1])
+        ->first();
+
+        $old_van_id = $product->serial_numbers[0]['van_id'] ?? null;
+
+        $updatedRows = Product::where('_id', $product_id)
+            ->where('serial_numbers.serial_number', $serial_number)
+            ->update([
+                'serial_numbers.$.van_id' => $van_id
+            ]);
+
+        $saved = !empty($updatedRows);
+
+        if($saved){
+            $product = Product::where('_id', $product_id)
+                ->where('serial_numbers.serial_number', $serial_number)
+                ->project([
+                    'name' => 1,
+                    'serial_numbers.$' => 1 ,
+                ])
+                ->first();
+
+            $warehouseId = $product->serial_numbers[0]['warehouse_id'];
+            $new_van = Van::select('licenceplate')->find($van_id);
+
+            // FROM VAN TO VAN | IF OLD_VAN != NEW_VAN
+            if(!empty($old_van_id) && $old_van_id !== $van_id)
+            {
+                $old_van = Van::find($old_van_id);
+                $log = "$product->name with serial number $serial_number moved from $old_van->licenceplate to $new_van->licenceplate 🚚➡️🚚";
+                Product::historyLog($log, $serial_number, $product_id);
+            }
+
+            // FROM WAREHOUSE TO VAN | IF VAN_ID == EMPTY
+            if(empty($old_van_id))
+            {
+                $warehouse = Warehouse::select('name')->find($warehouseId);
+                $log = "$product->name with serial number $serial_number moved from $warehouse->name to $new_van->licenceplate 📦➡️🚚";
+                Product::historyLog($log,$serial_number,$product_id);
+            }
+
+        }
+
+        return $saved;
+    }
+
+    // API POST ENDPOINT
+    public function moveProductToVan(Request $request){
+        try{
+            $request->validate([
+                'product_id' => "required|string|exists:products,_id",
+                'serial_number' => "required|string|exists:products,serial_numbers.serial_number",
+                "van_id" => "required|string|exists:vans,_id",
+            ]);
+        }
+        catch(ValidationException $ve){
+            return response()->json($ve->validator->errors(), 422); // 422: Unprocessable Entity
+        }
+
+        try{
+            $product_id = $request->product_id;
+            $serial_number = $request->serial_number;
+            $van_id = $request->van_id;
+
+            $product = Product::find($product_id);
+            $van = Van::find($van_id);
+
+            // Check if the product is already in the specified van
+            $productInVan = Product::where('_id', $product_id)
+                ->where('serial_numbers.serial_number', $serial_number)
+                ->where('serial_numbers.van_id', $van_id)
+                ->exists();
+
+            if($productInVan){
+                return response()->json("Product with serial-number $serial_number is already in van {$van->licenceplate}.", 422); // 422: Unprocessable Entity
+            }
+
+            $stored = $this->allocateToVan(product_id: $product_id, serial_number: $serial_number, van_id: $van_id);
+            if(empty($stored)){
+                return response()->json("Could not move serial-number to van.", 422); // 422: Unprocessable Entity
+            }
+
+            return response()->json([
+                "success" => "Moved {$product->name} with serial-number $serial_number to {$van->licenceplate}"
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                "status" => "error",
+                "message" => "An unexpected error occurred. Please try again later.",
+                "code" => 500,
+            ], 500);
+        }
     }
 }
 

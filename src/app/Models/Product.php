@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Utils\MongoDB\DateTime;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\DB;
 use MongoDB\Laravel\Eloquent\Builder;
@@ -98,6 +99,15 @@ class Product extends Model
                 $update,
                 $filters
             );
+    }
+
+    public static function historyLog(string $log, string $serialNumber, string $p_Id)
+    {
+        self::where('_id', $p_Id)->where('serial_numbers.serial_number', $serialNumber)
+        ->push('serial_numbers.$.history', [
+            'text' => $log,
+            'created_at' => DateTime::current()
+        ]);
     }
 
 }
