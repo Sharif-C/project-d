@@ -75,8 +75,10 @@ class ProductController extends Controller
     public function addSerialNumberView(){
         $products = Product::select('_id', 'name', 'serial_numbers')->get();
         $warehouses = Warehouse::select('_id', 'name')->get();
+        $productsInWarehouse = Product::get();
 
-        return view('product.serial-number.manage', compact('products','warehouses'));
+
+        return view('product.serial-number.manage', compact('products','warehouses', 'productsInWarehouse'));
     }
 
     /**
@@ -197,18 +199,12 @@ class ProductController extends Controller
         $r->validate([
             'product_id' => 'required|exists:products,_id',
             'old_serial_number' => 'required|string|lowercase|exists:products,serial_numbers.serial_number',
-            'new_serial_number' => 'required|string|lowercase',
             'warehouse_id' => 'required|string|exists:warehouses,_id',
         ]);
 
         $product_id = $r->product_id;
-        $new_serial_number = Str::slug($r->new_serial_number);
         $old_serial_number = $r->old_serial_number;
         $warehouseId = $r->warehouse_id;
-
-        if($old_serial_number !== $new_serial_number){
-            $this->validateSerialNumber($product_id, $new_serial_number);
-        }
 
         $product = Product::where('_id', $product_id)
         ->where('serial_numbers.serial_number', $old_serial_number)
@@ -225,7 +221,6 @@ class ProductController extends Controller
             ->update(
                 ['$set' => [
                     'serial_numbers.$.warehouse_id' => $warehouseId,
-                    'serial_numbers.$.serial_number' => $new_serial_number,
                 ]
                 ]
             );
@@ -234,14 +229,13 @@ class ProductController extends Controller
             throw ValidationException::withMessages(['errors' => "Failed to update serial number."]);
         }
 
-        //TODO:  Loggen van warehouse if old_warehouse_id != new_warehouse_id
         if ($old_warehouse_id != null && $old_warehouse_id != $warehouseId) {
             $warehouse = Warehouse::find($warehouseId);
             $old_warehouse = Warehouse::find($old_warehouse_id);
-            $log = "{$product->name} with serial number {$new_serial_number} moved from {$old_warehouse->name} to {$warehouse->name} 📦➡️📦";
-            Product::historyLog($log, $new_serial_number, $product_id);
+            $log = "{$product->name} with serial number {$old_serial_number} moved from {$old_warehouse->name} to {$warehouse->name} 📦➡️📦";
+            Product::historyLog($log, $old_serial_number, $product_id);
         }
-        return to_route('view.serial-number', ['product_id' => $product_id, 'serial_number' => $new_serial_number])->with('success', 'Serial number updated!');
+        return to_route('view.serial-number', ['product_id' => $product_id, 'serial_number' => $old_serial_number])->with('success', 'Serial number updated!');
     }
 
     /**

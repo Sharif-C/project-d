@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Utils\MongoDB\DateTime;
+use App\Utils\Product\Enums\Status;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\DB;
 use MongoDB\Laravel\Eloquent\Builder;
@@ -37,7 +38,7 @@ class Product extends Model
     public function addSerialNumber(string $serialNumber, string $warehouseID)
     {
         $serialNumbers = $this->serial_numbers ?? [];
-        $serialNumbers[] = ['serial_number' => $serialNumber, 'warehouse_id' => $warehouseID];
+        $serialNumbers[] = ['serial_number' => $serialNumber, 'warehouse_id' => $warehouseID, 'status' => Status::STORED->value,];
         $this->serial_numbers = $serialNumbers;
     }
 

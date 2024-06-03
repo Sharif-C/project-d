@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Van;
 use App\Models\Warehouse;
+use App\Utils\Product\Enums\Status;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -125,7 +126,8 @@ class VanController extends Controller
                     'serial_numbers.$.van_id' => 1
                 ],
                 '$set' => [
-                    'serial_numbers.$.warehouse_id' => $warehouse_id
+                    'serial_numbers.$.warehouse_id' => $warehouse_id,
+                    'serial_numbers.$.status' => Status::STORED->value,
                 ]
             ]);
 
@@ -196,7 +198,8 @@ class VanController extends Controller
         $updatedRows = Product::where('_id', $product_id)
             ->where('serial_numbers.serial_number', $serial_number)
             ->update([
-                'serial_numbers.$.van_id' => $van_id
+                'serial_numbers.$.van_id' => $van_id,
+                'serial_numbers.$.status' => Status::DISPATCHED->value,
             ]);
 
         $saved = !empty($updatedRows);
