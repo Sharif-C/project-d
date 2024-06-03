@@ -235,6 +235,8 @@ class VanController extends Controller
     }
 
     // API POST ENDPOINT
+
+    // warehouse|van to van
     public function moveProductToVanAPI(Request $request){
         try{
             $request->validate([
@@ -244,7 +246,11 @@ class VanController extends Controller
             ]);
         }
         catch(ValidationException $ve){
-            return response()->json($ve->validator->errors(), 422); // 422: Unprocessable Entity
+            return response()->json([
+                "status" => "error",
+                "message" => $ve->validator->errors(),
+                "code" => 422,
+            ], 422);
         }
         try{
             $product_id = $request->product_id;
@@ -261,17 +267,31 @@ class VanController extends Controller
                 ->exists();
 
             if($productInVan){
-                return response()->json("Product with serial-number $serial_number is already in van {$van->licenceplate}.", 422); // 422: Unprocessable Entity
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Product with serial-number $serial_number is already in van {$van->licenceplate}.",
+                    "code" => 422,
+                ], 422);
             }
 
             $stored = $this->allocateToVan(product_id: $product_id, serial_number: $serial_number, van_id: $van_id);
             if(empty($stored)){
-                return response()->json("Could not move serial-number to van.", 422); // 422: Unprocessable Entity
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Could not move serial-number to van.",
+                    "code" => 422,
+                ], 422);
             }
 
             return response()->json([
-                "success" => "Moved {$product->name} with serial-number $serial_number to {$van->licenceplate}"
+                "status" => "success",
+                "message" => "Moved {$product->name} with serial-number $serial_number to {$van->licenceplate}",
+                "product" => $product->name,
+                "serial_number" => $serial_number,
+                "located_at_van" => $van_id,
+                "code" => 200,
             ]);
+
         } catch (Exception $e) {
             return response()->json([
                 "status" => "error",
@@ -281,6 +301,7 @@ class VanController extends Controller
         }
     }
 
+    // van to warehouse
     public function moveProductToWarehouseAPI(Request $request)
     {
         try{
@@ -291,49 +312,67 @@ class VanController extends Controller
             ]);
         }
         catch(ValidationException $ve){
-            return response()->json($ve->validator->errors(), 422);
+            return response()->json([
+                "status" => "error",
+                "message" => $ve->validator->errors(),
+                "code" => 422,
+            ], 422);
         }
 
         try{
             $product_id = $request->product_id;
             $serial_number = $request->serial_number;
             $warehouse_id = $request->warehouse_id;
-            
-            $product=Product::where('_id', $product_id)
+
+            $product = Product::where('_id', $product_id)
                 ->where('serial_numbers.serial_number', $serial_number)
                 ->project([
                     'name' => 1,
                     'serial_numbers.$' => 1 ,
                 ])
                 ->first();
-        
-        
-            if(empty($product->serial_numbers[0]['van_id'] ?? null)){
+
+
+//            if(empty($product->serial_numbers[0]['van_id'] ?? null)){
+//                return response()->json([
+//                    "status" => "error",
+//                    "message" => "Product with serial-number $serial_number is currently not in a van",
+//                    "code" => 422,
+//                ], 422);
+//            }
+
+            $stored = $this->detachProductFromVan(product_id: $product_id, serial_number: $serial_number, warehouse_id: $warehouse_id);
+
+            if(empty($stored)){
                 return response()->json([
                     "status" => "error",
-                    "message" => "Product with serial-number $serial_number is currently not in a van",
+                    "message" => "Could not transfer product $product_id with serialnumber $serial_number to warehouse",
                     "code" => 422,
                 ], 422);
             }
 
-            $stored = $this->detachProductFromVan(product_id: $product_id, serial_number: $serial_number, warehouse_id: $warehouse_id);
-            if(empty($stored)){
-                return response()-> json("Could not transfer product $product_id with serialnumber $serial_number to warehouse");
-            }
+            $new_located_warehouse = Warehouse::select('name')->find($warehouse_id);
 
             return response()->json([
-                "success" => "moved product x with serialnumber x to warehouse"
+                "status" => "success",
+                "message" => "Moved product {$product->name} with serial-number {$serial_number} to warehouse {$new_located_warehouse->name}",
+                "product" => $product->name,
+                "serial_number" => $serial_number,
+                "located_at_warehouse" => $warehouse_id,
+                "code" => 200,
             ]);
         }
         catch (Exception $e) {
             return response()->json([
                 "status" => "error",
-                "message" => "An unexpected error occured. Please try again later",
+                "message" => "An unexpected error occurred. Please try again later",
                 "code" => 500,
             ], 500);
         }
     }
 
+    // van to van
+    /*
     public function moveProductFromVanToVanAPI(Request $request)
     {
         try{
@@ -344,7 +383,11 @@ class VanController extends Controller
             ]);
         }
         catch(ValidationException $ve){
-            return response()->json($ve->validator->errors(), 422); // 422: Unprocessable Entity
+            return response()->json([
+                "status" => "error",
+                "message" => $ve->validator->errors(),
+                "code" => 422,
+            ], 422);
         }
 
         try{
@@ -362,16 +405,31 @@ class VanController extends Controller
                 ->exists();
 
             if($productInVan){
-                return response()->json("{$product->name} with serial-number $serial_number is already in van {$van->licenceplate}.", 422); // 422: Unprocessable Entity
+                return response()->json([
+                    "status" => "error",
+                    "message" => "{$product->name} with serial-number $serial_number is already in van {$van->licenceplate}.",
+                    "located_at_van" => $van_id,
+                    "code" => 422,
+                ], 422);
             }
 
             $stored = $this->allocateToVan(product_id: $product_id, serial_number: $serial_number, van_id: $van_id);
             if(empty($stored)){
-                return response()->json("Could not move {$product->name} with serial-number $serial_number to van {$van->licenceplate}.", 422); // 422: Unprocessable Entity
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Could not move {$product->name} with serial-number $serial_number to van {$van->licenceplate}.",
+                    "code" => 422,
+                ], 422);
             }
 
-            return response()->json("Moved product {$product->name} with serialnumber $serial_number to van {$van->licenceplate}"
-            );
+            return response()->json([
+                "status" => "success",
+                "message" => "Moved product {$product->name} with serialnumber $serial_number to van {$van->licenceplate}",
+                "product" => $product->name,
+                "serial_number" => $serial_number,
+                "located_at_van" => $van_id,
+                "code" => 200,
+            ]);
         }
         catch (Exception $e) {
             return response()->json([
@@ -381,4 +439,5 @@ class VanController extends Controller
             ], 500);
         }
     }
+    */
 }
