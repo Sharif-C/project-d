@@ -1,13 +1,17 @@
 @php
     $selected_serial_number = request('serial_number');
+    $status = strtoupper($product?->serial_numbers[0]['status']);
 @endphp
 
 @extends('layouts.main')
 @section('content')
     <div class="m-auto bg-white p-4 w-fit rounded min-w-[80%]">
         <div class="mb-2 flex justify-between items-center">
-            <h1 class="text-2xl text-left">Product: {{$product->name}}</h1>
-            <button id="logs-btn" class="default-button !bg-orange-600 hover:!bg-orange-700 !flex !gap-2">Logs <x-heroicon-o-document-text class="w-5"/></button>
+            <div class="flex gap-2 items-center">
+                <h1 class="text-2xl text-left">Product: {{$product->name}}</h1>
+                <div @class([\App\Utils\Product\Enums\Status::labelColor($status), "!text-sm w-fit h-fit text-gray-800 flex justify-center rounded px-[4px] py-[2px] text-white" ])>{{$status}}</div>
+            </div>
+            <button id="logs-btn" class="default-button !text-sm !bg-slate-500 hover:!bg-orange-700 !flex !gap-2">Logs <x-heroicon-o-document-text class="w-4"/></button>
         </div>
 
         <form action="{{route('update.serial-number')}}" method="POST" class="flex flex-col gap-2 mb-4">
@@ -16,7 +20,7 @@
             <input type="text" name="old_serial_number" value="{{$selected_serial_number}}" readonly hidden>
 
             <label for="new_serial_number" class="default-label">Serial number</label>
-            <input type="text" name="new_serial_number" value="{{$selected_serial_number}}" class="default-input">
+            <input type="text" name="new_serial_number" value="{{$selected_serial_number}}" readonly disabled class="default-input">
 
             <label for="warehouse_id" class="default-label">Warehouse</label>
             <select name="warehouse_id" class="default-input">
