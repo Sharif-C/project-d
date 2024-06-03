@@ -5,8 +5,9 @@
 @extends('layouts.main')
 @section('content')
     <div class="m-auto bg-white p-4 w-fit rounded min-w-[80%]">
-        <div class="mb-2">
+        <div class="mb-2 flex justify-between items-center">
             <h1 class="text-2xl text-left">Product: {{$product->name}}</h1>
+            <button id="logs-btn" class="default-button !bg-orange-600 hover:!bg-orange-700 !flex !gap-2">Logs <x-heroicon-o-document-text class="w-5"/></button>
         </div>
 
         <form action="{{route('update.serial-number')}}" method="POST" class="flex flex-col gap-2 mb-4">
@@ -84,12 +85,37 @@
         </x-slot:form>
     </x-popup.form>
 
+
+    <x-popup.form key="serial-number-history" heading="History logs">
+        <x-slot:form>
+            <section class="comment-section flex flex-col gap-4 pt-3 pr-5 overflow-auto h-[390px]">
+                @foreach($product->serial_numbers ?? [] as $serialNumber)
+                    @if(!empty($serialNumber['history']))
+                        @foreach( array_reverse($serialNumber['history'])  as $i => $log)
+                            <div>
+                                <div @class(["log bg-gray-100 p-3 rounded", "!bg-[#88327D]/[0.1]" => $i==0 ])>
+                                    <p class="">{!! nl2br(e($log['text'])) !!}</p>
+                                    <p class="font-light text-[11px] mt-[3px]">{{ $log['created_at']?->toDateTime()?->format('d-m-Y H:i:s') }}</p>
+                                </div>
+                            </div>
+                        @endforeach
+                    @endif
+                @endforeach
+            </section>
+        </x-slot:form>
+    </x-popup.form>
+
     <script type="text/javascript">
         $(".delete-comment-btn").click(function(){
             let commentId = $(this).data('id');
             $('#delete-comment-id').val(commentId);
             $('.popup-delete-comment').show();
             showPopup(commentId);
+        });
+
+
+        $("#logs-btn").click(function (){
+            $('.popup-serial-number-history').show();
         });
     </script>
 @stop

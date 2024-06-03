@@ -58,7 +58,7 @@
         <!-- Table -->
         <div class="mx-auto w-full rounded-sm border border-gray-200 bg-white shadow-lg">
             <header class="border-b border-gray-100 px-5 py-4">
-                <div class="font-semibold text-emerald-800">Product serial numbers</div>
+                <div class="font-semibold text-gray-800">Product serial numbers</div>
 
                 @if(session()->has('success_delete'))
                     <p class="p-2 text-emerald-500">{{session('success_delete')}}</p>
