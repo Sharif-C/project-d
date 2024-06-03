@@ -131,14 +131,12 @@ class VanController extends Controller
 
         $saved = !empty($updatedRows);
 
-        if($saved){
-//            TODO: Logging
-            {
-                $warehouse = Warehouse::find($warehouse_id);
-                $old_van = Van::find($old_van_id);
-                $log = "$product->name with serial number $serial_number moved from $$old_van->licenceplate to $warehouse->name";
-                Product::historyLog($log,$serial_number,$product_id);
-            }
+        if($saved)
+        {
+            $warehouse = Warehouse::select('name')->find($warehouse_id);
+            $old_van = Van::select('licenceplate')->find($old_van_id);
+            $log = "$product->name with serial number $serial_number moved from $old_van->licenceplate to $warehouse->name 🚚➡️📦";
+            Product::historyLog($log,$serial_number,$product_id);
         }
 
         return $updatedRows;
@@ -148,7 +146,7 @@ class VanController extends Controller
      * @throws ValidationException
      * @throws \Throwable
      */
-    public function allocateProductsToVanTest(Request $request, Van $van)
+    public function allocateProductsToVan(Request $request, Van $van)
     {
         $request->validate([
             "selection" => "required|array",
@@ -168,10 +166,7 @@ class VanController extends Controller
             $serial_number = $serial_numbers[$i];
 
             $found = Product::where("_id", $product_id)->where('serial_numbers.serial_number', $serial_number)->exists();
-
-            if(!$found){
-                throw ValidationException::withMessages(['errors' => 'Combination not found!']);
-            }
+            throw_if(!$found, ValidationException::withMessages(['errors' => 'Combination not found!']));
         }
 
         for ($i=0; $i<$iterations; $i++){
@@ -190,19 +185,13 @@ class VanController extends Controller
      */
     private function allocateToVan(string $product_id, string $serial_number, string $van_id) : bool{
 
-        $vanid_present = false;
-        $old_van_id = null;
-
         // Check if van_id is present
         $product = Product::where('_id', $product_id)
         ->where('serial_numbers.serial_number', $serial_number)
         ->project(['serial_numbers.$' => 1])
         ->first();
-        if ($product && !empty($product->serial_numbers[0]['van_id'])) {
-            $vanid_present = true;
-            $old_van_id = $product->serial_numbers[0]['van_id'];
-            }
 
+        $old_van_id = $product->serial_numbers[0]['van_id'] ?? null;
 
         $updatedRows = Product::where('_id', $product_id)
             ->where('serial_numbers.serial_number', $serial_number)
@@ -220,20 +209,23 @@ class VanController extends Controller
                     'serial_numbers.$' => 1 ,
                 ])
                 ->first();
-            $warehouseId = $product->serial_numbers[0]['warehouse_id'];
-            $van = Van::find($van_id);
-            $warehouse = Warehouse::find($warehouseId);
 
-            // logging
-            if($vanid_present)
+            $warehouseId = $product->serial_numbers[0]['warehouse_id'];
+            $new_van = Van::select('licenceplate')->find($van_id);
+
+            // FROM VAN TO VAN | IF OLD_VAN != NEW_VAN
+            if(!empty($old_van_id) && $old_van_id !== $van_id)
             {
                 $old_van = Van::find($old_van_id);
-                $log2 = "$product->name with serial number $serial_number moved from $old_van->licenceplate to $van->licenceplate";
-                Product::historyLog($log2,$serial_number,$product_id);
+                $log = "$product->name with serial number $serial_number moved from $old_van->licenceplate to $new_van->licenceplate 🚚➡️🚚";
+                Product::historyLog($log, $serial_number, $product_id);
             }
-            else
+
+            // FROM WAREHOUSE TO VAN | IF VAN_ID == EMPTY
+            if(empty($old_van_id))
             {
-                $log = "$product->name with serial number $serial_number moved from $warehouse->name to $van->licenceplate";
+                $warehouse = Warehouse::select('name')->find($warehouseId);
+                $log = "$product->name with serial number $serial_number moved from $warehouse->name to $new_van->licenceplate 📦➡️🚚";
                 Product::historyLog($log,$serial_number,$product_id);
             }
 

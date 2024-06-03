@@ -100,14 +100,14 @@ class Product extends Model
                 $filters
             );
     }
-    public static function historyLog(string $log,$serialNumber,$p_Id)
+
+    public static function historyLog(string $log, string $serialNumber, string $p_Id)
     {
-        $logger = Product::where('_id', $p_Id)
-            ->where('serial_numbers.serial_number', $serialNumber)
-            ->push('serial_numbers.$.history', [
-                'text' => $log,
-                'created_at' => DateTime::current()
-            ]);
+        self::where('_id', $p_Id)->where('serial_numbers.serial_number', $serialNumber)
+        ->push('serial_numbers.$.history', [
+            'text' => $log,
+            'created_at' => DateTime::current()
+        ]);
     }
 
 }

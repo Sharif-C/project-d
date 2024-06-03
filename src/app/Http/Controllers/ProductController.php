@@ -212,8 +212,14 @@ class ProductController extends Controller
 
         $product = Product::where('_id', $product_id)
         ->where('serial_numbers.serial_number', $old_serial_number)
-        ->firstOrFail();
-        $old_warehouse_id = $product->serial_numbers[0]['warehouse_id'];
+        ->project([
+            'name' => 1,
+            'serial_numbers.$' => 1,
+        ])
+        ->first();
+
+        $old_warehouse_id = $product->serial_numbers[0]['warehouse_id'] ?? null;
+
         $updated = Product::where('_id', $product_id)
             ->where('serial_numbers.serial_number', $old_serial_number)
             ->update(
@@ -229,11 +235,11 @@ class ProductController extends Controller
         }
 
         //TODO:  Loggen van warehouse if old_warehouse_id != new_warehouse_id
-        if ($old_warehouse_id != $warehouseId) {
+        if ($old_warehouse_id != null && $old_warehouse_id != $warehouseId) {
             $warehouse = Warehouse::find($warehouseId);
             $old_warehouse = Warehouse::find($old_warehouse_id);
-            $log2 = "{$product->name} with serial number {$new_serial_number} moved from {$old_warehouse->name} to {$warehouse->name}";
-            Product::historyLog($log2, $new_serial_number, $product_id);
+            $log = "{$product->name} with serial number {$new_serial_number} moved from {$old_warehouse->name} to {$warehouse->name}";
+            Product::historyLog($log, $new_serial_number, $product_id);
         }
         return to_route('view.serial-number', ['product_id' => $product_id, 'serial_number' => $new_serial_number])->with('success', 'Serial number updated!');
     }
