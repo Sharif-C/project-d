@@ -1,6 +1,8 @@
 @php
     $selected_serial_number = request('serial_number');
     $status = strtoupper($product?->serial_numbers[0]['status']);
+    $van_id = $product?->serial_numbers[0]['van_id'] ?? null;
+    $statusInstalled = ($product?->serial_numbers[0]['status'] ?? false) === \App\Utils\Product\Enums\Status::INSTALLED->value;
 @endphp
 
 @extends('layouts.main')
@@ -11,7 +13,12 @@
                 <h1 class="text-2xl text-left">Product: {{$product->name}}</h1>
                 <div @class([\App\Utils\Product\Enums\Status::labelColor($status), "!text-sm w-fit h-fit text-gray-800 flex justify-center rounded px-[4px] py-[2px] text-white" ])>{{$status}}</div>
             </div>
-            <button id="logs-btn" class="default-button !text-sm !bg-slate-500 hover:!bg-orange-700 !flex !gap-2">Logs <x-heroicon-o-document-text class="w-4"/></button>
+            <div class="flex gap-3">
+                <button id="logs-btn" class="default-button !text-sm !bg-slate-500 hover:!bg-slate-700 !flex !gap-2">Logs <x-heroicon-o-document-text class="w-4"/></button>
+                @if(!$statusInstalled && !empty($van_id))
+                <button id="install-btn" class="default-button !text-sm !bg-emerald-500 hover:!bg-emerald-700 !flex !gap-2">Install <x-heroicon-o-wrench-screwdriver class="w-4"/></button>
+                @endif
+            </div>
         </div>
 
         <form action="{{route('update.serial-number')}}" method="POST" class="flex flex-col gap-2 mb-4">
@@ -20,14 +27,24 @@
             <input type="text" name="old_serial_number" value="{{$selected_serial_number}}" readonly hidden>
 
             <label for="new_serial_number" class="default-label">Serial number</label>
-            <input type="text" name="new_serial_number" value="{{$selected_serial_number}}" readonly disabled class="default-input">
+            <input type="text" value="{{$selected_serial_number}}" readonly disabled class="default-input">
 
-            <label for="warehouse_id" class="default-label">Warehouse</label>
-            <select name="warehouse_id" class="default-input">
-                @foreach($warehouses as $w)
-                    <option value="{{$w->_id}}" @selected($w->_id === $product->warehouse()?->_id)>{{$w?->name}}</option>
-                @endforeach
-            </select>
+            @if($statusInstalled === false)
+                <label for="warehouse_id" class="default-label">Warehouse</label>
+                <select name="warehouse_id" class="default-input">
+                    @foreach($warehouses as $w)
+                        <option value="{{$w->_id}}" @selected($w->_id === $product->warehouse()?->_id)>{{$w?->name}}</option>
+                    @endforeach
+                </select>
+            @endif
+
+            @if(!empty($van_id))
+                <a href="{{route('van.edit.view', ['van' => $van_id])}}">
+                    <label for="located_van" class="default-label hover:cursor-pointer !underline !underline-offset-1">Located in van</label>
+                </a>
+                <input type="text" value="{{$product->getVanLicensePlate($van_id)}}" readonly disabled class="default-input">
+            @endif
+
             <button class="default-button w-fit !px-4">Save</button>
         </form>
 
@@ -109,6 +126,17 @@
         </x-slot:form>
     </x-popup.form>
 
+    <x-popup.form key="install-product" heading="Are you sure to install this product?">
+        <x-slot:form>
+            <p><b>Please note: </b>By installing this product it can no longer be updated.</p>
+            <form method="POST" action="{{route('install.product.serial-number', ['product' => $product->_id, 'serial_number' => $selected_serial_number])}}">
+                @csrf
+                <input type="text" name="serial_number" value="{{$selected_serial_number}}" hidden readonly>
+                <button class="default-button">Install</button>
+            </form>
+        </x-slot:form>
+    </x-popup.form>
+
     <script type="text/javascript">
         $(".delete-comment-btn").click(function(){
             let commentId = $(this).data('id');
@@ -120,6 +148,10 @@
 
         $("#logs-btn").click(function (){
             $('.popup-serial-number-history').show();
+        });
+
+        $("#install-btn").click(function (){
+            $('.popup-install-product').show();
         });
     </script>
 @stop

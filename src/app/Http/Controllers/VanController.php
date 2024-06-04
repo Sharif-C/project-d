@@ -60,7 +60,11 @@ class VanController extends Controller
                     '$filter' => [
                         'input' => '$serial_numbers',
                         'as' => 'serial',
-                        'cond' => ['$eq' => ['$$serial.van_id', $vanId]]
+                        'cond' => [
+                            '$and' => [
+                                ['$ne' => ['$$serial.status', Status::INSTALLED->value]],
+                            ]
+                        ]
                     ]
                 ]
             ])
@@ -68,7 +72,27 @@ class VanController extends Controller
         $warehouses = Warehouse::all();
 
 
-        $products = Product::whereNot('serial_numbers', null)->get()->take(100);
+        $products = Product::whereNot('serial_numbers', null)
+            ->project([
+                '_id' => 1,
+                'created_at' => 1,
+                'updated_at' => 1,
+                'name' => 1,
+                'description' => 1,
+                'serial_numbers' => [
+                    '$filter' => [
+                        'input' => '$serial_numbers',
+                        'as' => 'serial',
+                        'cond' => [
+                            '$and' => [
+                                ['$eq' => ['$$serial.status', Status::STORED->value]],
+                            ]
+                        ]
+                    ]
+                ]
+            ])
+            ->get()
+            ->take(100);
         return view("van.update", compact("van", "relatedProducts", "products", "warehouses"));
     }
 
@@ -108,7 +132,11 @@ class VanController extends Controller
         return redirect()->back()->with('success', "Moved product to warehouse.");
     }
 
+    /**
+     * @throws \Throwable
+     */
     private function detachProductFromVan(string $product_id, string $serial_number, string $warehouse_id) : bool|int{
+        Product::throwIfInstalled($product_id, $serial_number);
 
         $product = Product::where('_id', $product_id)
         ->where('serial_numbers.serial_number', $serial_number)
@@ -184,8 +212,10 @@ class VanController extends Controller
 
     /**
      * @throws ValidationException
+     * @throws \Throwable
      */
     private function allocateToVan(string $product_id, string $serial_number, string $van_id) : bool{
+        Product::throwIfInstalled($product_id, $serial_number);
 
         // Check if van_id is present
         $product = Product::where('_id', $product_id)
@@ -260,6 +290,8 @@ class VanController extends Controller
             $serial_number = $request->serial_number;
             $van_id = $request->van_id;
 
+            Product::throwIfInstalled($product_id, $serial_number);
+
             $product = Product::find($product_id);
             $van = Van::find($van_id);
 
@@ -295,7 +327,15 @@ class VanController extends Controller
                 "code" => 200,
             ]);
 
-        } catch (Exception $e) {
+        }
+        catch(ValidationException $ve){
+            return response()->json([
+                "status" => "error",
+                "message" => $ve->validator->errors(),
+                "code" => 422,
+            ], 422);
+        }
+        catch (Exception $e) {
             return response()->json([
                 "status" => "error",
                 "message" => "An unexpected error occurred. Please try again later.",
@@ -327,6 +367,8 @@ class VanController extends Controller
             $serial_number = $request->serial_number;
             $warehouse_id = $request->warehouse_id;
 
+            Product::throwIfInstalled($product_id, $serial_number);
+
             $product = Product::where('_id', $product_id)
                 ->where('serial_numbers.serial_number', $serial_number)
                 ->project([
@@ -346,7 +388,6 @@ class VanController extends Controller
             }
 
             $stored = $this->detachProductFromVan(product_id: $product_id, serial_number: $serial_number, warehouse_id: $warehouse_id);
-
             if(empty($stored)){
                 return response()->json([
                     "status" => "error",
@@ -366,6 +407,13 @@ class VanController extends Controller
                 "code" => 200,
             ]);
         }
+        catch(ValidationException $ve){
+            return response()->json([
+                "status" => "error",
+                "message" => $ve->validator->errors(),
+                "code" => 422,
+            ], 422);
+        }
         catch (Exception $e) {
             return response()->json([
                 "status" => "error",
@@ -373,6 +421,7 @@ class VanController extends Controller
                 "code" => 500,
             ], 500);
         }
+
     }
 
     // van to van

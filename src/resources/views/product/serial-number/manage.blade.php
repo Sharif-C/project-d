@@ -80,6 +80,9 @@
                             <div class="text-left font-semibold">Origin warehouse</div>
                         </th>
                         <th class="p-2">
+                            <div class="text-left font-semibold">Located in van</div>
+                        </th>
+                        <th class="p-2">
                             <div class="text-left font-semibold">Status</div>
                         </th>
                         <th class="p-2">
@@ -107,7 +110,10 @@
                                             <div class="font-medium text-gray-800">{{$product->name}}</div>
                                         </td>
                                         <td class="p-2">
-                                            <div class="font-medium text-gray-800">{{$product->getWarehouseName($serialNumber['warehouse_id'])}}</div>
+                                            <div class="font-medium text-gray-800">{{!empty($serialNumber['warehouse_id']) ? $product->getWarehouseName($serialNumber['warehouse_id']) : "" }}</div>
+                                        </td>
+                                        <td class="p-2">
+                                            <div class="font-medium text-gray-800">{{ !empty($serialNumber['van_id']) ? $product->getVanLicensePlate($serialNumber['van_id']) : "" }}</div>
                                         </td>
                                         <td class="p-2">
                                             @php

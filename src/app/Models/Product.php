@@ -6,6 +6,7 @@ use App\Utils\MongoDB\DateTime;
 use App\Utils\Product\Enums\Status;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use MongoDB\Laravel\Eloquent\Builder;
 use MongoDB\Laravel\Eloquent\Model;
 
@@ -111,4 +112,21 @@ class Product extends Model
         ]);
     }
 
+    /**
+     * @throws \Throwable
+     */
+    public static function throwIfInstalled(string $product_id, string $serial_number){
+
+        $product = self::where('_id', $product_id)
+            ->where('serial_numbers.serial_number', $serial_number)
+            ->project([
+                'name' => 1,
+                'serial_numbers.$' => 1 ,
+            ])
+            ->first();
+        $status = $product['serial_numbers'][0]['status'] ?? false;
+
+        throw_if($status === Status::INSTALLED->value, ValidationException::withMessages(['errors' => 'This product is already installed. It can no longer be updated.']));
+
+    }
 }

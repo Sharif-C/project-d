@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Warehouse;
 use App\Utils\MongoDB\DateTime;
+use App\Utils\Product\Enums\Status;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -206,6 +208,8 @@ class ProductController extends Controller
         $old_serial_number = $r->old_serial_number;
         $warehouseId = $r->warehouse_id;
 
+        Product::throwIfInstalled($product_id, $old_serial_number);
+
         $product = Product::where('_id', $product_id)
         ->where('serial_numbers.serial_number', $old_serial_number)
         ->project([
@@ -236,6 +240,117 @@ class ProductController extends Controller
             Product::historyLog($log, $old_serial_number, $product_id);
         }
         return to_route('view.serial-number', ['product_id' => $product_id, 'serial_number' => $old_serial_number])->with('success', 'Serial number updated!');
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function installProduct(Request $request, Product $product){
+        $request->validate([
+            'serial_number' => 'required|string|lowercase|exists:products,serial_numbers.serial_number',
+        ]);
+
+        Product::throwIfInstalled($product->_id, $request->serial_number);
+
+        // check if combination exists
+        $combinationExists = Product::where('_id', $product->_id)->where('serial_numbers.serial_number', $request->serial_number)->exists();
+        throw_if(!$combinationExists, ValidationException::withMessages(['errors' => "Combination not found."]));
+
+
+        $stored = $this->setStatusInstalled($product->id, $request->serial_number);
+
+
+        throw_if(!$stored, ValidationException::withMessages(['errors' => "Could not set this product to installed."]));
+
+
+        return redirect()->back()->with('success', "Product is installed!");
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function installProductAPI(Request $request,)
+    {
+        try {
+            $request->validate([
+                'serial_number' => 'required|string|lowercase|exists:products,serial_numbers.serial_number',
+                'product_id' => 'required|string|lowercase|exists:products,_id',
+            ]);
+
+            $product_id = $request->product_id;
+            $serial_number = $request->serial_number;
+
+
+            Product::throwIfInstalled($product_id, $serial_number);
+
+            // check if combination exists
+            $combinationExists = Product::where('_id', $product_id)->where('serial_numbers.serial_number', $serial_number)->exists();
+            throw_if(!$combinationExists, ValidationException::withMessages(['errors' => "Combination not found."]));
+
+
+            $stored = $this->setStatusInstalled($product_id, $serial_number);
+
+            throw_if(!$stored, ValidationException::withMessages(['errors' => "Could not set this product to installed."]));
+
+            $product = Product::find($product_id);
+            return response()->json([
+                "status" => "success",
+                "message" => "Product installed!",
+                "product" => $product->name,
+                "serial_number" => $serial_number,
+                "code" => 200,
+            ]);
+
+        } catch (ValidationException $ve) {
+            return response()->json([
+                "status" => "error",
+                "message" => $ve->validator->errors(),
+                "code" => 422,
+            ], 422);
+        } catch (Exception $e) {
+            return response()->json([
+                "status" => "error",
+                "message" => $e->getMessage(),
+                "code" => 500,
+            ], 500);
+        }
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    private function setStatusInstalled($product_id, $serial_number) : bool{
+        Product::throwIfInstalled($product_id, $serial_number);
+
+        $product = Product::where('_id', $product_id)
+            ->where('serial_numbers.serial_number', $serial_number)
+            ->project([
+                'name' => 1,
+                'serial_numbers.$' => 1 ,
+            ])
+            ->first();
+        $has_van_id = $product['serial_numbers'][0]['van_id'] ?? false;
+        throw_if(!$has_van_id, ValidationException::withMessages(['errors' => 'Products can only be installed if the last location is van.']));
+
+
+        $updatedRows = Product::where('_id', $product_id)
+            ->where('serial_numbers.serial_number', $serial_number)
+            ->update(
+                [
+                    '$set' => ['serial_numbers.$.status' => Status::INSTALLED->value],
+                    '$unset' => ['serial_numbers.$.van_id' => 1, 'serial_numbers.$.warehouse_id' => 1]
+
+                ]
+            );
+
+        $stored = !empty($updatedRows);
+
+        if($stored){
+            $log = "Product installed! 🪛";
+            Product::historyLog($log, $serial_number, $product_id);
+        }
+
+        return $stored;
     }
 
     /**

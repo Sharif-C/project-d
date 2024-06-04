@@ -68,3 +68,8 @@ Route::get('/van/edit/{van}', [VanController::class, 'updateVanView'])
     ->missing(function (){return to_route('manage.vans');});
 Route::post ("van/update", [VanController::class, "updateVanAction"])->name("van.update.action");
 Route::post ("van/move/product/warehouse", [VanController::class, "moveProductToWarehouse"])->name("van.move.product.warehouse");
+
+
+Route::post("product/install/{product}", [ProductController::class, "installProduct"])
+    ->name("install.product.serial-number")
+    ->missing(function (){return redirect()->back();});
