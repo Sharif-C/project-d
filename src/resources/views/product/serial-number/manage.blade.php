@@ -58,7 +58,7 @@
         <!-- Table -->
         <div class="mx-auto w-full rounded-sm border border-gray-200 bg-white shadow-lg">
             <header class="border-b border-gray-100 px-5 py-4">
-                <div class="font-semibold text-emerald-800">Product serial numbers</div>
+                <div class="font-semibold text-gray-800">Product serial numbers</div>
 
                 @if(session()->has('success_delete'))
                     <p class="p-2 text-emerald-500">{{session('success_delete')}}</p>
@@ -77,7 +77,13 @@
                             <div class="text-left font-semibold">Product</div>
                         </th>
                         <th class="p-2">
-                            <div class="text-left font-semibold">Warehouse</div>
+                            <div class="text-left font-semibold">Origin warehouse</div>
+                        </th>
+                        <th class="p-2">
+                            <div class="text-left font-semibold">Located in van</div>
+                        </th>
+                        <th class="p-2">
+                            <div class="text-left font-semibold">Status</div>
                         </th>
                         <th class="p-2">
                             <div class="text-center font-semibold">Actions</div>
@@ -87,13 +93,9 @@
 
                     <tbody class="divide-y divide-gray-100 text-sm">
                     <!-- record 1 -->
-                        @foreach($products as $product)
+                        @foreach($productsInWarehouse as $product)
                             @if(isset($product->serial_numbers))
                                 @foreach($product->serial_numbers as $serialNumber)
-
-                                    @if(isset($serialNumber['van_id']))
-                                        @continue
-                                    @endif
 
                                     <tr>
                                         <td class="p-2">
@@ -108,7 +110,17 @@
                                             <div class="font-medium text-gray-800">{{$product->name}}</div>
                                         </td>
                                         <td class="p-2">
-                                            <div class="font-medium text-gray-800">{{$product->getWarehouseName($serialNumber['warehouse_id'])}}</div>
+                                            <div class="font-medium text-gray-800">{{!empty($serialNumber['warehouse_id']) ? $product->getWarehouseName($serialNumber['warehouse_id']) : "" }}</div>
+                                        </td>
+                                        <td class="p-2">
+                                            <div class="font-medium text-gray-800">{{ !empty($serialNumber['van_id']) ? $product->getVanLicensePlate($serialNumber['van_id']) : "" }}</div>
+                                        </td>
+                                        <td class="p-2">
+                                            @php
+                                            $s_status = strtoupper($serialNumber['status']);
+                                            $statusColor = \App\Utils\Product\Enums\Status::labelColor($s_status);
+                                             @endphp
+                                            <div @class(["!text-xs w-[95px] text-gray-800 flex justify-center rounded px-[4px] py-[2px] text-white", $statusColor  ])>{{$s_status}}</div>
                                         </td>
                                         <td class="p-2">
                                             <div class="flex justify-center gap-2">

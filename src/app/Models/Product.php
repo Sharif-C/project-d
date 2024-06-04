@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Utils\MongoDB\DateTime;
+use App\Utils\Product\Enums\Status;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use MongoDB\Laravel\Eloquent\Builder;
 use MongoDB\Laravel\Eloquent\Model;
 
@@ -36,7 +39,7 @@ class Product extends Model
     public function addSerialNumber(string $serialNumber, string $warehouseID)
     {
         $serialNumbers = $this->serial_numbers ?? [];
-        $serialNumbers[] = ['serial_number' => $serialNumber, 'warehouse_id' => $warehouseID];
+        $serialNumbers[] = ['serial_number' => $serialNumber, 'warehouse_id' => $warehouseID, 'status' => Status::STORED->value,];
         $this->serial_numbers = $serialNumbers;
     }
 
@@ -100,4 +103,30 @@ class Product extends Model
             );
     }
 
+    public static function historyLog(string $log, string $serialNumber, string $p_Id)
+    {
+        self::where('_id', $p_Id)->where('serial_numbers.serial_number', $serialNumber)
+        ->push('serial_numbers.$.history', [
+            'text' => $log,
+            'created_at' => DateTime::current()
+        ]);
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public static function throwIfInstalled(string $product_id, string $serial_number){
+
+        $product = self::where('_id', $product_id)
+            ->where('serial_numbers.serial_number', $serial_number)
+            ->project([
+                'name' => 1,
+                'serial_numbers.$' => 1 ,
+            ])
+            ->first();
+        $status = $product['serial_numbers'][0]['status'] ?? false;
+
+        throw_if($status === Status::INSTALLED->value, ValidationException::withMessages(['errors' => 'This product is already installed. It can no longer be updated.']));
+
+    }
 }

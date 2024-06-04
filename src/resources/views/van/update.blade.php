@@ -38,6 +38,10 @@
 
                 </div>
 
+                @foreach($errors->moveProductToWarehouse->all() as $e)
+                    <p class="mt-2 text-rose-400">{{$e}}</p>
+                @endforeach
+
                 @if(session()->has('success_delete'))
                     <p class="p-2 text-emerald-500">{{session('success_delete')}}</p>
                 @endif
@@ -92,7 +96,7 @@
                                                 <x-heroicon-o-eye class="w-6 h-6 text-gray-500 hover:text-indigo-500 duration-200 ease-in-out"/>
                                             </a>
                                             <!-- Delete button with data-id attribute -->
-                                            <button class="delete-button" onclick="showPopup('{{$relatedProduct->_id}}', '{{$serialNumber['serial_number']}}')">
+                                            <button class="move-product-button" data-serial-number="{{$serialNumber['serial_number']}}" data-product-id="{{$relatedProduct->_id}}">
                                                 <x-heroicon-o-arrow-right-start-on-rectangle class="w-6 h-6 text-gray-500 hover:text-rose-500 duration-200 ease-in-out"/>
                                             </button>
                                         </div>
@@ -106,6 +110,28 @@
             </div>
         </div>
     </section>
+
+    <x-popup.form key="move-to-warehouse">
+        <x-slot:heading>
+            Return product to warehouse.
+        </x-slot:heading>
+
+        <x-slot:form>
+            <form id="move-product-form" action="{{route('van.move.product.warehouse')}}" method="POST">
+                @csrf
+                <label for="warehouse_id" class="default-label">To Warehouse</label>
+                <select name="warehouse_id" class="default-input" required>
+                    @foreach($warehouses as $w)
+                        <option value="{{$w->_id}}">{{$w->name}}</option>
+                    @endforeach
+                </select>
+                <input type="text" id="move-serial-number" name="serial_number" required hidden readonly>
+                <input type="text" id="move-product-id" name="product_id" required hidden readonly>
+                <button class="default-button">Confirm</button>
+            </form>
+        </x-slot:form>
+    </x-popup.form>
+
 
     <x-popup.form key="relate-products">
         <x-slot:heading>
@@ -207,5 +233,14 @@
             const isChecked = $(this).is(":checked");
             $(id).prop( "checked", isChecked );
         })
+
+
+        $('.move-product-button').click(function () {
+            const serialNumber = $(this).data('serialNumber');
+            const productId = $(this).data('productId');
+            $('#move-serial-number').val(serialNumber);
+            $('#move-product-id').val(productId);
+            $('.popup-move-to-warehouse').show();
+        });
     </script>
 @stop
