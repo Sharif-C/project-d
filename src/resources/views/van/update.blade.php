@@ -72,6 +72,10 @@
                     @foreach($relatedProducts as $relatedProduct)
                         @if(isset($relatedProduct->serial_numbers))
                             @foreach($relatedProduct->serial_numbers as $serialNumber)
+                                @if(!isset($serialNumber['van_id']) ||  $serialNumber['van_id'] != $van->_id)
+                                    @continue
+                                @endif
+
                                 <tr>
                                     <td class="p-2">
                                         <input type="checkbox" class="h-5 w-5" value="id-1"

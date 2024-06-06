@@ -1,5 +1,7 @@
 <nav class="bg-[#88327D] w-[300px] flex flex-col items-center p-6">
-    <h1 class="font-bold text-2xl p-2 uppercase text-white text-left w-full">Inventory Connect</h1>
+    <a href="{{route('home')}}">
+        <h1 class="font-bold text-2xl p-2 uppercase text-white text-left w-full">Inventory Connect</h1>
+    </a>
 
     <ul class="flex flex-col w-full mt-8">
         <li class="flex flex-col text-xl gap-6">
