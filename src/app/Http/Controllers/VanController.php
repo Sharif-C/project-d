@@ -84,8 +84,9 @@ class VanController extends Controller
                         'input' => '$serial_numbers',
                         'as' => 'serial',
                         'cond' => [
-                            '$and' => [
+                            '$or' => [
                                 ['$eq' => ['$$serial.status', Status::STORED->value]],
+                                ['$eq' => ['$$serial.status', Status::DISPATCHED->value]],
                             ]
                         ]
                     ]
